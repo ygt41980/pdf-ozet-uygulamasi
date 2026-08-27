@@ -51,13 +51,6 @@
         const yuklemeAlani = document.getElementById("yukleme-alani");
         const gonderButon = document.getElementById("gonder-buton");
         const form = document.getElementById("yukleme-formu");
-
-        dosyaInput.addEventListener("change", () => {
-            if (dosyaInput.files.length > 0) {
-                secilenDosyaEtiketi.textContent = "Seçilen dosya: " + dosyaInput.files[0].name;
-            }
-        });
-
         ["dragover", "dragenter"].forEach((olay) => {
             yuklemeAlani.addEventListener(olay, (e) => {
                 e.preventDefault();
@@ -85,16 +78,19 @@
             gonderButon.textContent = "Analiz ediliyor...";
             document.getElementById("yuklemeAnimasyonu").style.display = "block";
         });
-    dosyaInput.addEventListener("change", (e) => {
-        const dosya = e.target.files[0];
-        const maxBoyut = 20 * 1024 * 1024; // 20 MB
-
-        if (dosya && dosya.size > maxBoyut) {
+   dosyaInput.addEventListener("change", (e) => {
+    const dosya = e.target.files[0];
+    const maxBoyut = 20 * 1024 * 1024; // 20 MB
+    if (dosya) {
+        if (dosya.size > maxBoyut) {
             alert("Dosya boyutu çok yüksek! Lütfen maksimum 20 MB boyutunda bir PDF yükleyin.");
             dosyaInput.value = "";
             secilenDosyaEtiketi.textContent = "";
+        } else {
+            secilenDosyaEtiketi.textContent = "Seçilen dosya: " + dosya.name;
         }
-    });
+    }
+});
     </script>
 </body>
 </html>
