@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Analiz &amp; Özetleme Aracı</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="sayfa">
+        <header class="baslik">
+            <h1>📄 PDF Analiz &amp; Özetleme Aracı</h1>
+            <p>PDF dosyanızı yükleyin; sizin için otomatik olarak özetleyelim.</p>
+        </header>
+
+        {% with mesajlar = get_flashed_messages(with_categories=true) %}
+            {% if mesajlar %}
+                <div class="mesajlar">
+                    {% for kategori, mesaj in mesajlar %}
+                        <div class="mesaj mesaj--{{ kategori }}">{{ mesaj }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <main class="kart">
+            <form action="{{ url_for('analiz_et') }}" method="post" enctype="multipart/form-data" id="yukleme-formu">
+                <label for="pdf_dosya" class="yukleme-alani" id="yukleme-alani">
+                    <span class="yukleme-simge">⬆️</span>
+                    <span class="yukleme-metin">PDF dosyasını buraya sürükleyin ya da seçmek için tıklayın</span>
+                    <span class="yukleme-alt-metin">Maksimum dosya boyutu: {{ maks_boyut }} MB</span>
+                    <input type="file" name="pdf_dosya" id="pdf_dosya" accept="application/pdf" required hidden>
+                </label>
+                <p class="secilen-dosya" id="secilen-dosya"></p>
+                <button type="submit" class="buton" id="gonder-buton">Analiz Et</button>
+            </form>
+        </main>
+
+        <footer class="alt-bilgi">
+            <p>Metin çıkarma pdfplumber ile, özetleme ise basit bir frekans tabanlı yöntemle yapılır.</p>
+        </footer>
+    </div>
+
+    <script>
+        const dosyaInput = document.getElementById("pdf_dosya");
+        const secilenDosyaEtiketi = document.getElementById("secilen-dosya");
+        const yuklemeAlani = document.getElementById("yukleme-alani");
+        const gonderButon = document.getElementById("gonder-buton");
+        const form = document.getElementById("yukleme-formu");
+
+        dosyaInput.addEventListener("change", () => {
+            if (dosyaInput.files.length > 0) {
+                secilenDosyaEtiketi.textContent = "Seçilen dosya: " + dosyaInput.files[0].name;
+            }
+        });
+
+        ["dragover", "dragenter"].forEach((olay) => {
+            yuklemeAlani.addEventListener(olay, (e) => {
+                e.preventDefault();
+                yuklemeAlani.classList.add("yukleme-alani--aktif");
+            });
+        });
+
+        ["dragleave", "drop"].forEach((olay) => {
+            yuklemeAlani.addEventListener(olay, (e) => {
+                e.preventDefault();
+                yuklemeAlani.classList.remove("yukleme-alani--aktif");
+            });
+        });
+
+        yuklemeAlani.addEventListener("drop", (e) => {
+            const dosyalar = e.dataTransfer.files;
+            if (dosyalar.length > 0) {
+                dosyaInput.files = dosyalar;
+                secilenDosyaEtiketi.textContent = "Seçilen dosya: " + dosyalar[0].name;
+            }
+        });
+
+        form.addEventListener("submit", () => {
+            gonderButon.disabled = true;
+            gonderButon.textContent = "Analiz ediliyor...";
+        });
+    </script>
+</body>
+</html>

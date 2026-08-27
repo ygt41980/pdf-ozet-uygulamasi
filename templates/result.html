@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analiz Sonucu - {{ dosya_adi }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="sayfa">
+        <header class="baslik">
+            <h1>📄 Analiz Sonucu</h1>
+            <p class="dosya-adi">{{ dosya_adi }}</p>
+        </header>
+
+        <main class="kart">
+            <section class="istatistik-grid">
+                <div class="istatistik-kutu">
+                    <span class="istatistik-sayi">{{ sayfa_sayisi }}</span>
+                    <span class="istatistik-etiket">Sayfa</span>
+                </div>
+                <div class="istatistik-kutu">
+                    <span class="istatistik-sayi">{{ istatistikler.kelime_sayisi }}</span>
+                    <span class="istatistik-etiket">Kelime</span>
+                </div>
+                <div class="istatistik-kutu">
+                    <span class="istatistik-sayi">{{ istatistikler.karakter_sayisi }}</span>
+                    <span class="istatistik-etiket">Karakter</span>
+                </div>
+                <div class="istatistik-kutu">
+                    <span class="istatistik-sayi">{{ istatistikler.tahmini_okuma_suresi_dk }} dk</span>
+                    <span class="istatistik-etiket">Tahmini Okuma</span>
+                </div>
+            </section>
+
+            <section class="bolum">
+                <h2>📝 Özet</h2>
+                <p class="ozet-metni">{{ ozet }}</p>
+            </section>
+
+            {% if anahtar_kelimeler %}
+            <section class="bolum">
+                <h2>🔑 Öne Çıkan Kelimeler</h2>
+                <div class="etiket-listesi">
+                    {% for kelime, adet in anahtar_kelimeler %}
+                        <span class="etiket">{{ kelime }} <small>({{ adet }})</small></span>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
+            <a href="{{ url_for('anasayfa') }}" class="buton buton--ikincil">← Başka bir PDF yükle</a>
+        </main>
+    </div>
+</body>
+</html>
