@@ -1,4 +1,7 @@
 import re
+import google.generativeai as genai
+import json
+import os
 from collections import Counter
 
 STOPWORDS = {
@@ -121,40 +124,43 @@ def metin_istatistiklerini_hesapla(metin: str) -> dict:
         "tahmini_okuma_suresi_dk": tahmini_okuma_suresi_dk
     }
 import random
-def soru_uret(metin: str, adet: int = 5) -> list:
-    """Metindeki anahtar kelimeleri kullanarak farklı tarzlarda ve tıklanabilir şıklı çalışma soruları üretir."""
-    anahtar_kelimeler = anahtar_kelimeleri_bul(metin, adet=10)
-    if not anahtar_kelimeler:
+def soru_uret(metin, adet=3):
+    try:
+        api_key = os.environ.get("GEMINI_API_KEY")
+        if not api_key:
+            return []
+
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel('gemini-1.5-flash')
+
+        prompt = f"""
+        Aşağıdaki akademik/kimya metnine dayanarak tam {adet} adet çoktan seçmeli test sorusu hazırla.
+        Sorular ve şıklar metindeki bilgilere tam olarak uygun, mantıklı ve anlamlı olmalıdır.
+        
+        Yanıtı SADECE aşağıdaki JSON formatında ver, başka hiçbir açıklama metni ekleme:
+        [
+            {{
+                "soru": "Soru metni buraya",
+                "siklar": ["A şıkkı", "B şıkkı", "C şıkkı", "D şıkkı"],
+                "cevap": "Doğru olan şıkkın birebir metni"
+            }}
+        ]
+
+        Metin:
+        {metin[:8000]}
+        """
+
+        response = model.generate_content(prompt)
+        raw_text = response.text.strip()
+        if raw_text.startswith("```"):
+            raw_text = raw_text.split("")[1]
+            if raw_text.startswith("json"):
+                raw_text = raw_text[4:]
+        raw_text = raw_text.strip()
+
+        sorular = json.loads(raw_text)
+        return sorular
+
+    except Exception as e:
+        print(f"Gemini soru üretme hatası: {e}")
         return []
-
-    secilenler = random.sample(anahtar_kelimeler, min(adet, len(anahtar_kelimeler)))
-    quiz_listesi = []
-
-    soru_kaliplari = [
-        "Metne göre '{}' kavramı hangi bağlamda ön plana çıkmaktadır?",
-        "Aşağıdakilerden hangisi metinde geçen '{}' terimi ile doğrudan ilişkilidir?",
-        "Metinde vurgulanan temel unsurlardan biri olan '{}' hakkında ne söylenebilir?",
-        "Yazıda sıklıkla bahsedilen '{}' kavramının metindeki temel işlevi nedir?",
-        "Metnin ana hatları göz önüne alındığında '{}' kavramı neyi ifade eder?"
-    ]
-
-    for idx, (kelime, frekans) in enumerate(secilenler, 1):
-        yanlis_secenekler = [k[0] for k in anahtar_kelimeler if k[0] != kelime]
-        secenek_havuzu = random.sample(yanlis_secenekler, min(3, len(yanlis_secenekler)))
-
-        while len(secenek_havuzu) < 3:
-            secenek_havuzu.append("Diğerleri")
-
-        secenek_havuzu.append(kelime)
-        random.shuffle(secenek_havuzu)
-
-        kalipli_metin = random.choice(soru_kaliplari).format(kelime.capitalize())
-
-        quiz_listesi.append({
-            "soru_no": idx,
-            "metin": kalipli_metin,
-            "secenekler": secenek_havuzu,
-            "dogru_cevap": kelime
-        })
-
-    return quiz_listesi
