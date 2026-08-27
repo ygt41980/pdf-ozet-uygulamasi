@@ -123,8 +123,6 @@ def metin_istatistiklerini_hesapla(metin: str) -> dict:
         "karakter_sayisi": karakter_sayisi,
         "tahmini_okuma_suresi_dk": tahmini_okuma_suresi_dk
     }
-import random
- print("Soru üretme hatası:", e)
 def soru_uret(metin: str, adet: int = 5) -> list:
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
