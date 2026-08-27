@@ -133,18 +133,18 @@ def soru_uret(metin: str, adet: int = 5) -> list:
     
     for idx, (kelime, frekans) in enumerate(secilenler, 1):
         yanlis_secenekler = [k[0] for k in anahtar_Kelimeler if k[0] != kelime]
-        secenek Havuzu = random.sample(yanlis_secenekler, min(3, len(yanlis_secenekler)))
+        secenek_havuzu = random.sample(yanlis_secenekler, min(3, len(yanlis_secenekler)))
         
-        while len(secenek Havuzu) < 3:
-            secenek Havuzu.append("Diğerleri")
+        while len(secenek_havuzu) < 3:
+            secenek_havuzu.append("Diğerleri")
             
-        secenek Havuzu.append(kelime)
-        random.shuffle(secenek Havuzu)
+        secenek_havuzu.append(kelime)
+        random.shuffle(secenek_havuzu)
         
         quiz_listesi.append({
             "soru_no": idx,
             "metin": f"Metinde geçen ve en sık vurgulanan temel kavramlardan biri olan '{kelime.capitalize()}' ile ilgili aşağıdakilerden hangisi söylenebilir?",
-            "secenekler": secenek Havuzu,
+            "secenekler": secenek_havuzu,
             "dogru_cevap": kelime
         })
         
