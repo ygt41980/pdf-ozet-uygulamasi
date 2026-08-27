@@ -145,6 +145,27 @@ function ozetiIndir() {
         const btn = document.querySelector('.dark-mode-toggle');
         if (btn) btn.innerHTML = isDarkMode ? '☀️ Açık Mod' : '🌙 Koyu Mod';
     }
+
+    function cevabiKontrolEt(soruNo, dogruCevap) {
+        const secilen = document.querySelector(input[name="soru_${soruNo}"]:checked);
+        const sonucP = document.getElementById(sonuc-${soruNo});
+
+        if (!sonucP) return;
+
+        if (!secilen) {
+            sonucP.style.color = "#dc3545";
+            sonucP.innerText = "⚠️ Lütfen bir şık seçin!";
+            return;
+        }
+
+        if (secilen.value.trim().toLowerCase() === dogruCevap.trim().toLowerCase()) {
+            sonucP.style.color = "#198754";
+            sonucP.innerText = "🎉 Doğru Cevap!";
+        } else {
+            sonucP.style.color = "#dc3545";
+            sonucP.innerText = ❌ Yanlış! Doğru cevap: "${dogruCevap}";
+        }
+    }
 </script>
 </body>
 </html>
