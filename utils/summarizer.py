@@ -129,7 +129,7 @@ def soru_uret(metin: str, adet: int = 5) -> list:
         return []
         
     genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    model = genai.GenerativeModel('gemini-3.6-flash')
     
     prompt = f"""
     Aşağıdaki metne dayanarak öğrencinin çalışması için {adet} adet çoktan seçmeli soru üret.
