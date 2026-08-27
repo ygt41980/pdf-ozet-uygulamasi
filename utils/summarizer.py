@@ -121,31 +121,30 @@ def metin_istatistiklerini_hesapla(metin: str) -> dict:
         "tahmini_okuma_suresi_dk": tahmini_okuma_suresi_dk
     }
 import random
-
 def soru_uret(metin: str, adet: int = 5) -> list:
     """Metindeki anahtar kelimeleri ve önemli terimleri kullanarak şıklı çalışma soruları üretir."""
-    anahtar_Kelimeler = anahtar_kelimeleri_bul(metin, adet=10)
-    if not anahtar_Kelimeler:
+    anahtar_kelimeler = anahtar_kelimeleri_bul(metin, adet=10)
+    if not anahtar_kelimeler:
         return []
-    
-    secilenler = random.sample(anahtar_Kelimeler, min(adet, len(anahtar_Kelimeler)))
+
+    secilenler = random.sample(anahtar_kelimeler, min(adet, len(anahtar_kelimeler)))
     quiz_listesi = []
-    
+
     for idx, (kelime, frekans) in enumerate(secilenler, 1):
-        yanlis_secenekler = [k[0] for k in anahtar_Kelimeler if k[0] != kelime]
+        yanlis_secenekler = [k[0] for k in anahtar_kelimeler if k[0] != kelime]
         secenek_havuzu = random.sample(yanlis_secenekler, min(3, len(yanlis_secenekler)))
-        
+
         while len(secenek_havuzu) < 3:
             secenek_havuzu.append("Diğerleri")
-            
+
         secenek_havuzu.append(kelime)
         random.shuffle(secenek_havuzu)
-        
+
         quiz_listesi.append({
             "soru_no": idx,
-            "metin": f"Metinde geçen ve en sık vurgulanan temel kavramlardan biri olan '{kelime.capitalize()}' ile ilgili aşağıdakilerden hangisi söylenebilir?",
+            "metin": f"Metinde en çok öne çıkan temel kavramlardan biri olan '{kelime.capitalize()}' kavramı ile ilgili vurgu aşağıdakilerden hangisidir?",
             "secenekler": secenek_havuzu,
             "dogru_cevap": kelime
         })
-        
+
     return quiz_listesi
