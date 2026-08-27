@@ -96,12 +96,6 @@
             sonucP.innerText = ❌ Yanlış! Doğru cevap: "${dogruCevap}";
         }
     }
-    
-    // Fonksiyon adını butonla eşitlemek için alias
-    function cevabiKontrolEt(soruNo, dogruCevap) {
-        kontrolEt(soruNo, dogruCevap);
-    }
-</script>
 {% endif %}
             <a href="{{ url_for('anasayfa') }}" class="buton buton--ikincil">← Başka bir PDF yükle</a>
         </main>
@@ -126,9 +120,6 @@ function ozetiIndir() {
     link.click();
     URL.revokeObjectURL(link.href);
 }
-</script>
-    </div>
-</script>
 <script>
     window.addEventListener('DOMContentLoaded', () => {
         if (localStorage.getItem('darkMode') === 'enabled') {
