@@ -141,7 +141,7 @@ def soru_uret(metin: str, adet: int = 5) -> list:
     Metin:
     {metin[:4000]}
     """
-    try:
+   try:
         response = model.generate_content(prompt)
         raw_text = response.text.strip()
         if "` ` `json" in raw_text:
@@ -152,4 +152,3 @@ def soru_uret(metin: str, adet: int = 5) -> list:
     except Exception as e:
         print("Soru üretme hatası:", e)
         return []
-        
