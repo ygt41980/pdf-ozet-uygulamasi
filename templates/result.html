@@ -2,90 +2,80 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>PDF Analiz Sonucu</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .container { max-width: 800px; margin-top: 40px; margin-bottom: 40px; }
-        .card { border: none; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .özet-kutu { background: #ffffff; padding: 25px; border-radius: 10px; line-height: 1.7; }
-        .badge-keyword { font-size: 0.9rem; padding: 8px 14px; margin: 4px; border-radius: 20px; }
-        .quiz-option { transition: all 0.2s ease; cursor: pointer; }
-        .quiz-option:hover { background-color: #e9ecef; }
-        .correct-answer { background-color: #d1e7dd !important; border-color: #badbcc !important; color: #0f5132; font-weight: bold; }
-        .wrong-answer { background-color: #f8d7da !important; border-color: #f5c2c7 !important; color: #842029; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analiz Sonucu - {{ dosya_adi }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+    <div class="sayfa">
+        <header class="baslik">
+            <h1>📄 Analiz Sonucu</h1>
+            <p class="dosya-adi">{{ dosya_adi }}</p>
+        </header>
 
-<div class="container">
-    <!-- Üst Başlık ve İstatistikler -->
-    <div class="card p-4 mb-4 text-center">
-        <h2 class="mb-3 text-primary">📄 {{ dosya_adi_guvenli_ad }}</h2>
-        <div class="row text-muted fw-semibold">
-            <div class="col">Sayfa: <span class="text-dark">{{ sayfa_sayisi }}</span></div>
-            <div class="col">Kelime: <span class="text-dark">{{ istatistikler.kelime_sayisi }}</span></div>
-            <div class="col">Karakter: <span class="text-dark">{{ istatistikler.karakter_sayisi }}</span></div>
-            <div class="col">Okuma Süresi: <span class="text-dark">{{ istatistikler.tahmini_okuma_süresi_dk }} dk</span></div>
-        </div>
-    </div>
-
-    <!-- Özet Alanı -->
-    <div class="card p-4 mb-4">
-        <h4 class="mb-3 text-secondary">📌 Yönetici Özeti</h4>
-        <div id="ozet-metni1" class="özet-kutu border">
-            {{ ozet | safe }}
-        </div>
-        <div class="mt-3 d-flex gap-2">
-            <button class="btn btn-primary btn-sm" onclick="metniKopyala()">📋 Özeti Kopyala</button>
-            <button class="btn btn-outline-secondary btn-sm" onclick="ozetiIndir()">📥 .txt İndir</button>
-        </div>
-    </div>
-
-    <!-- Öne Çıkan Kelimeler -->
-    <div class="card p-4 mb-4">
-        <h4 class="mb-3 text-secondary">🔑 Öne Çıkan Kelimeler</h4>
-        <div>
-            {% for kelime, frekans in anahtar_kelimeler %}
-                <span class="badge bg-light text-dark border badge-keyword">{{ kelime }} ({{ frekans }})</span>
-            {% endfor %}
-        </div>
-    </div>
-
-    <!-- Çalışma Soruları (Quiz) Alanı -->
-    {% if quiz_sorulari %}
-    <div class="card p-4 mb-4">
-        <h4 class="mb-3 text-secondary">🧠 Çalışma Soruları (Quiz)</h4>
-        <p class="text-muted small">Öğrendiklerini pekiştirmek için aşağıdaki soruları yanıtla ve anında kontrol et!</p>
-        
-        <form id="quizForm">
-            {% for soru in quiz_sorulari %}
-                <div class="mb-4 p-3 border rounded bg-white soru-karti" data-dogru="{{ soru.dogru_cevap }}">
-                    <p class="fw-bold text-dark"><strong>{{ soru.soru_no }}.</strong> {{ soru.metin }}</p>
-                    <div class="list-group">
-                        {% for secenek in soru.secenekler %}
-                            <label class="list-group-item quiz-option rounded mb-2 border">
-                                <input class="form-check-input me-2 secenek-input" type="radio" name="soru_{{ soru.soru_no }}" value="{{ secenek }}">
-                                {{ secenek }}
-                            </label>
-                        {% endfor %}
-                    </div>
-                    <div class="cevap-geri-bildirim mt-2 fw-semibold small" style="display: none;"></div>
+        <main class="kart">
+            <section class="istatistik-grid">
+                <div class="istatistik-kutu">
+                    <span class="istatistik-sayi">{{ sayfa_sayisi }}</span>
+                    <span class="istatistik-etiket">Sayfa</span>
                 </div>
-            {% endfor %}
-            <button type="button" class="btn btn-success w-100 py-2 fw-bold" onclick="cevaplariKontrolEt()">✨ Cevapları Kontrol Et</button>
-        </form>
-    </div>
-    {% endif %}
+                <div class="istatistik-kutu">
+                    <span class="istatistik-sayi">{{ istatistikler.kelime_sayisi }}</span>
+                    <span class="istatistik-etiket">Kelime</span>
+                </div>
+                <div class="istatistik-kutu">
+                    <span class="istatistik-sayi">{{ istatistikler.karakter_sayisi }}</span>
+                    <span class="istatistik-etiket">Karakter</span>
+                </div>
+                <div class="istatistik-kutu">
+                    <span class="istatistik-sayi">{{ istatistikler.tahmini_okuma_suresi_dk }} dk</span>
+                    <span class="istatistik-etiket">Tahmini Okuma</span>
+                </div>
+            </section>
 
-    <div class="text-center mt-4">
-        <a href="{{ url_for('anasayfa') }}" class="btn btn-dark px-4">🔄 Başka Bir PDF Yükle</a>
-    </div>
-</div>
+            <section class="bolum">
+                <h2>📝 Özet</h2>
+                <p id="ozet-metni" class="ozet-metni">{{ ozet }}</p>
+                <div style="margin-top: 10px; display: flex; gap: 10px;">
+    <button type="button" class="buton" onclick="metniKopyala()">📋 Özeti Kopyala</button>
+    <button type="button" class="buton buton--ikincil" onclick="ozetiIndir()">📥 .txt İndir</button>
+                    </div>
+            </section>
 
-<script>
+            {% if anahtar_kelimeler %}
+            <section class="bolum">
+                <h2>🔑 Öne Çıkan Kelimeler</h2>
+                <div class="etiket-listesi">
+                    {% for kelime, adet in anahtar_kelimeler %}
+                        <span class="etiket">{{ kelime }} <small>({{ adet }})</small></span>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+{% if quiz %}
+<section class="bolum">
+    <h2>📝 Çalışma Soruları (Quiz)</h2>
+    <div style="display: flex; flex-direction: column; gap: 15px;">
+        {% for q in quiz %}
+        <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid #e1e4e8;">
+            <p style="font-weight: bold; margin-bottom: 10px;">{{ loop.index }}. {{ q.soru }}</p>
+            <ul style="list-style-type: none; padding-left: 0; display: flex; flex-direction: column; gap: 8px;">
+                {% for sik in q.secenekler %}
+                <li style="padding: 8px 12px; background: #fff; border: 1px solid #d1d5db; border-radius: 4px;">
+                    {{ sik }}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+            <a href="{{ url_for('anasayfa') }}" class="buton buton--ikincil">← Başka bir PDF yükle</a>
+        </main>
+            <script>
 function metniKopyala() {
-    const ozetElemani = document.getElementById("ozet-metni1");
+    const ozetElemani = document.getElementById("ozet-metni");
     if (!ozetElemani) return;
     navigator.clipboard.writeText(ozetElemani.innerText).then(() => {
         alert("Özet panoya kopyalandı!");
@@ -95,7 +85,7 @@ function metniKopyala() {
 }
 
 function ozetiIndir() {
-    const ozetElemani = document.getElementById("ozet-metni1");
+    const ozetElemani = document.getElementById("ozet-metni");
     if (!ozetElemani) return;
     const blob = new Blob([ozetElemani.innerText], { type: "text/plain;charset=utf-8" });
     const link = document.createElement("a");
@@ -104,52 +94,10 @@ function ozetiIndir() {
     link.click();
     URL.revokeObjectURL(link.href);
 }
-
-function cevaplariKontrolEt() {
-    const soruKartlari = document.querySelectorAll(".soru-karti");
-    let dogruSayisi = 0;
-
-    soruKartlari.forEach((kart) => {
-        const dogruCevap = kart.getAttribute("data-dogru").trim().toLowerCase();
-        const secilenInput = kart.querySelector("input[type='radio']:checked");
-        const geriBildirim = kart.querySelector(".cevap-geri-bildirim");
-        
-        geriBildirim.style.display = "block";
-
-        // Tüm şıkların stilini sıfırla
-        kart.querySelectorAll(".quiz-option").forEach(opt => {
-            opt.classList.remove("correct-answer", "wrong-answer");
-        });
-
-        if (!secilenInput) {
-            geriBildirim.innerHTML = "⚠️ Bu soruyu boş bıraktınız!";
-            geriBildirim.className = "cevap-geri-bildirim mt-2 fw-semibold small text-warning";
-            return;
-        }
-
-        const secilenDeger = secilenInput.value.trim().toLowerCase();
-        const secilenLabel = secilenInput.closest("label");
-
-        if (secilenDeger === dogruCevap) {
-            secilenLabel.classList.add("correct-answer");
-            geriBildirim.innerHTML = "🎉 Tebrikler, doğru cevap!";
-            geriBildirim.className = "cevap-geri-bildirim mt-2 fw-semibold small text-success";
-            dogruSayisi++;
-        } else {
-            secilenLabel.classList.add("wrong-answer");
-            geriBildirim.innerHTML = ❌ Yanlış cevap. Doğru cevap: <strong>${kart.getAttribute("data-dogru")}</strong>;
-            geriBildirim.className = "cevap-geri-bildirim mt-2 fw-semibold small text-danger";
-            
-            // Doğru şıkkı yeşil ile vurgula
-            kart.querySelectorAll(".quiz-option").forEach(opt => {
-                const input = opt.querySelector("input");
-                if (input && input.value.trim().toLowerCase() === dogruCevap) {
-                    opt.classList.add("correct-answer");
-                }
-            });
-        }
-    });
-}
+</script>
+    </div>
+</body>
+</html>
 </script>
 
 </body>
