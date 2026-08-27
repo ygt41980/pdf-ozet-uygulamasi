@@ -35,7 +35,11 @@
 
             <section class="bolum">
                 <h2>📝 Özet</h2>
-                <p class="ozet-metni">{{ ozet }}</p>
+                <p id="ozet-metni" class="ozet-metni">{{ ozet }}</p>
+                <div style="margin-top: 10px; display: flex; gap: 10px;">
+    <button type="button" class="buton" onclick="metniKopyala()">📋 Özeti Kopyala</button>
+    <button type="button" class="buton buton--ikincil" onclick="ozetiIndir()">📥 .txt İndir</button>
+                    </div>
             </section>
 
             {% if anahtar_kelimeler %}
@@ -51,6 +55,28 @@
 
             <a href="{{ url_for('anasayfa') }}" class="buton buton--ikincil">← Başka bir PDF yükle</a>
         </main>
+        <script>
+function metniKopyala() {
+    const ozetElemani = document.getElementById("ozet-metni");
+    if (!ozetElemani) return;
+    navigator.clipboard.writeText(ozetElemani.innerText).then(() => {
+        alert("Özet panoya kopyalandı!");
+    }).catch(() => {
+        alert("Kopyalama başarısız oldu.");
+    );
+}
+
+function ozetiIndir() {
+    const ozetElemani = document.getElementById("ozet-metni");
+    if (!ozetElemani) return;
+    const blob = new Blob([ozetElemani.innerText], { type: "text/plain;charset=utf-8" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "pdf_ozeti.txt";
+    link.click();
+    URL.revokeObjectURL(link.href);
+}
+</script>
     </div>
 </body>
 </html>
