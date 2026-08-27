@@ -15,7 +15,7 @@ Sonra tarayıcıdan http://127.0.0.1:5000 adresine gidin.
 import os
 import uuid
 
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, jsonify, render_template, request, redirect, url_for, flash
 from werkzeug.utils import secure_filename
 
 from utils.pdf_utils import pdf_metnini_cikar, PDFOkumaHatasi
