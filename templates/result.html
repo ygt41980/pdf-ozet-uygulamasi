@@ -55,9 +55,9 @@
 {% if quiz %}
 <section class="bolum">
     <h2>🧠 Çalışma Soruları (Quiz)</h2>
-    <div style="display: flex; flex-direction: column; gap: 15px;">
+    <div style="display: flex; flex-direction: column; gap: 20px;">
         {% for q in quiz %}
-        <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid #e1e4e8;">
+        <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid #e1e4e8;" id="soru-kutusu-{{ loop.index }}">
             <p style="font-weight: bold; margin-bottom: 10px;">{{ q.soru_no }}. {{ q.metin }}</p>
             <ul style="list-style-type: none; padding-left: 0; display: flex; flex-direction: column; gap: 8px;">
                 {% for sik in q.secenekler %}
@@ -69,10 +69,39 @@
                 </li>
                 {% endfor %}
             </ul>
+            <button type="button" onclick="cevabiKontrolEt({{ loop.index }}, '{{ q.dogru_cevap|safe }}')" style="margin-top: 10px; padding: 6px 12px; background: #0d6efd; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem;">Cevabı Kontrol Et</button>
+            <p id="sonuc-{{ loop.index }}" style="margin-top: 8px; font-weight: bold; font-size: 0.9rem;"></p>
         </div>
         {% endfor %}
     </div>
 </section>
+
+<!-- Kontrol Etme JavaScript Fonksiyonu -->
+<script>
+    function kontrolEt(soruNo, dogruCevap) {
+        const secilen = document.querySelector(input[name="soru_${soruNo}"]:checked);
+        const sonucP = document.getElementById(sonuc-${soruNo});
+        
+        if (!secilen) {
+            sonucP.style.color = "#dc3545";
+            sonucP.innerText = "⚠️ Lütfen bir şık seçin!";
+            return;
+        }
+
+        if (secilen.value.trim().toLowerCase() === dogruCevap.trim().toLowerCase()) {
+            sonucP.style.color = "#198754";
+            sonucP.innerText = "🎉 Doğru Cevap!";
+        } else {
+            sonucP.style.color = "#dc3545";
+            sonucP.innerText = ❌ Yanlış! Doğru cevap: "${dogruCevap}";
+        }
+    }
+    
+    // Fonksiyon adını butonla eşitlemek için alias
+    function cevabiKontrolEt(soruNo, dogruCevap) {
+        kontrolEt(soruNo, dogruCevap);
+    }
+</script>
 {% endif %}
             <a href="{{ url_for('anasayfa') }}" class="buton buton--ikincil">← Başka bir PDF yükle</a>
         </main>
