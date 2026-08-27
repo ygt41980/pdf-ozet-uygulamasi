@@ -184,15 +184,16 @@ def soru_uret(metin: str, adet: int = 5) -> list:
     Metin:
     {metin[:4000]}
     """
-    
     try:
         response = client.models.generate_content(
             model='gemini-2.5-flash',
             contents=prompt,
         )
-        # Yanıttan gelen JSON'ı ayıkla ve döndür (Gerekli parse işlemleri eklenebilir)
-        # Basitlik olması açısından veya projedeki yapıya uygun şekilde ayarlayabilirsin.
+        raw_text = response.text.strip()
+        if raw_text.startswith("```"):
+            raw_text = raw_text.split("")[1]
+        raw_text = raw_text.replace("json", "", 1).replace("```", "").strip()
+        return json.loads(raw_text)
     except Exception as e:
         print("Soru üretme hatası:", e)
-        
-    return []
+        return []
