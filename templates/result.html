@@ -58,13 +58,14 @@
     <h2>🧠 Çalışma Soruları (Quiz)</h2>
     <div style="display: flex; flex-direction: column; gap: 20px;">
         {% for q in quiz %}
+        {% set outer_loop_index = loop.index %}
 <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid #e1e4e8; margin-bottom: 20px;" id="soru-kutusu-{{ loop.index }}">
     <p style="font-weight: bold; margin-bottom: 10px;">{{ loop.index }}. {{ q.soru }}</p>
     <ul style="list-style-type: none; padding-left: 0; display: flex; flex-direction: column; gap: 8px;">
         {% for sik in q.siklar %}
         <li style="padding: 8px 12px; background: #fff; border: 1px solid #d1d5db; border-radius: 4px;">
             <label style="cursor: pointer; display: flex; align-items: center; width: 100%; margin-bottom: 0;">
-                <input type="radio" name="soru_{{ loop.parent.index }}" value="{{ sik }}" style="margin-right: 8px; cursor: pointer;">
+                <input type="radio" name="soru_{{ outer_loop_index }}" value="{{ sik }}" style="margin-right: 8px; cursor: pointer;">
                 {{ sik }}
             </label>
         </li>
