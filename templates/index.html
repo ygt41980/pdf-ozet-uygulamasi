@@ -33,7 +33,11 @@
                 </label>
                 <p class="secilen-dosya" id="secilen-dosya"></p>
                 <button type="submit" class="buton" id="gonder-buton">Analiz Et</button>
-            </form>
+            </form> 
+            <div id="yuklemeAnimasyonu" style="display: none; text-align: center; margin-top: 15px; color: #007bff; font-weight: bold;">
+    ⏳ PDF analiz ediliyor, lütfen bekleyin...
+</div>
+      
         </main>
 
         <footer class="alt-bilgi">
@@ -79,6 +83,7 @@
         form.addEventListener("submit", () => {
             gonderButon.disabled = true;
             gonderButon.textContent = "Analiz ediliyor...";
+            document.getElementById("yuklemeAnimasyonu").style.display = "block";
         });
     dosyaInput.addEventListener("change", (e) => {
         const dosya = e.target.files[0];
