@@ -64,7 +64,7 @@
         {% for sik in q.siklar %}
         <li style="padding: 8px 12px; background: #fff; border: 1px solid #d1d5db; border-radius: 4px;">
             <label style="cursor: pointer; display: flex; align-items: center; width: 100%; margin-bottom: 0;">
-                <input type="radio" name="soru_{{ loop.parent.loop.index if loop.parent else loop.index }}" value="{{ sik }}" style="margin-right: 8px; cursor: pointer;">
+                <input type="radio" name="soru_{{ loop.parent.index }}" value="{{ sik }}" style="margin-right: 8px; cursor: pointer;">
                 {{ sik }}
             </label>
         </li>
