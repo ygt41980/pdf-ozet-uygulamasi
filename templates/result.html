@@ -54,15 +54,18 @@
             {% endif %}
 {% if quiz %}
 <section class="bolum">
-    <h2>📝 Çalışma Soruları (Quiz)</h2>
+    <h2>🧠 Çalışma Soruları (Quiz)</h2>
     <div style="display: flex; flex-direction: column; gap: 15px;">
         {% for q in quiz %}
         <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid #e1e4e8;">
-            <p style="font-weight: bold; margin-bottom: 10px;">{{ loop.index }}. {{ q.metin }}</p>
+            <p style="font-weight: bold; margin-bottom: 10px;">{{ q.soru_no }}. {{ q.metin }}</p>
             <ul style="list-style-type: none; padding-left: 0; display: flex; flex-direction: column; gap: 8px;">
                 {% for sik in q.secenekler %}
                 <li style="padding: 8px 12px; background: #fff; border: 1px solid #d1d5db; border-radius: 4px;">
-                    {{ sik }}
+                    <label style="cursor: pointer; display: flex; align-items: center; width: 100%; margin-bottom: 0;">
+                        <input type="radio" name="soru_{{ q.soru_no }}" value="{{ sik }}" style="margin-right: 10px; cursor: pointer;">
+                        {{ sik }}
+                    </label>
                 </li>
                 {% endfor %}
             </ul>
