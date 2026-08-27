@@ -78,28 +78,26 @@
 </section>
 <!-- Kontrol Etme JavaScript Fonksiyonu -->
 <script>
-    function kontrolEt(soruNo, dogruCevap) {
-        const secilen = document.querySelector(input[name="soru_${soruNo}"]:checked);
-        const sonucP = document.getElementById(sonuc-${soruNo});
-        
-        if (!secilen) {
-            sonucP.style.color = "#dc3545";
-            sonucP.innerText = "⚠️ Lütfen bir şık seçin!";
-            return;
-        }
-
-        if (secilen.value.trim().toLowerCase() === dogruCevap.trim().toLowerCase()) {
-            sonucP.style.color = "#198754";
-            sonucP.innerText = "🎉 Doğru Cevap!";
-        } else {
-            sonucP.style.color = "#dc3545";
-            sonucP.innerText = ❌ Yanlış! Doğru cevap: "${dogruCevap}";
-        }
+function kontrolEt(soruNo, dogruCevap) {
+    const secilen = document.querySelector(input[name="soru_${soruNo}"]:checked);
+    const sonucP = document.getElementById(sonuc-${soruNo});
+    if (!sonucP) return;
+    
+    if (!secilen) {
+        sonucP.style.color = "#dc3545";
+        sonucP.innerText = "⚠️ Lütfen bir şık seçin!";
+        return;
     }
-{% endif %}
-            <a href="{{ url_for('anasayfa') }}" class="buton buton--ikincil">← Başka bir PDF yükle</a>
-        </main>
-            <script>
+    
+    if (secilen.value.trim().toLowerCase() === dogruCevap.trim().toLowerCase()) {
+        sonucP.style.color = "#198754";
+        sonucP.innerText = "🎉 Doğru Cevap!";
+    } else {
+        sonucP.style.color = "#dc3545";
+        sonucP.innerText = ❌ Yanlış! Doğru cevap: "${dogruCevap}";
+    }
+}
+
 function metniKopyala() {
     const ozetElemani = document.getElementById("ozet-metni");
     if (!ozetElemani) return;
@@ -120,44 +118,22 @@ function ozetiIndir() {
     link.click();
     URL.revokeObjectURL(link.href);
 }
-<script>
-    window.addEventListener('DOMContentLoaded', () => {
-        if (localStorage.getItem('darkMode') === 'enabled') {
-            document.body.classList.add('dark-mode');
-            const btn = document.querySelector('.dark-mode-toggle');
-            if (btn) btn.innerHTML = '☀️ Açık Mod';
-        }
-    });
 
-    function toggleDarkMode() {
-        document.body.classList.toggle('dark-mode');
-        const isDarkMode = document.body.classList.contains('dark-mode');
-        localStorage.setItem('darkMode', isDarkMode ? 'enabled' : 'disabled');
-        
+window.addEventListener('DOMContentLoaded', () => {
+    if (localStorage.getItem('darkMode') === 'enabled') {
+        document.body.classList.add('dark-mode');
         const btn = document.querySelector('.dark-mode-toggle');
-        if (btn) btn.innerHTML = isDarkMode ? '☀️ Açık Mod' : '🌙 Koyu Mod';
+        if (btn) btn.innerHTML = '☀️ Açık Mod';
     }
+});
 
-    function cevabiKontrolEt(soruNo, dogruCevap) {
-        const secilen = document.querySelector(input[name="soru_${soruNo}"]:checked);
-        const sonucP = document.getElementById(sonuc-${soruNo});
-
-        if (!sonucP) return;
-
-        if (!secilen) {
-            sonucP.style.color = "#dc3545";
-            sonucP.innerText = "⚠️ Lütfen bir şık seçin!";
-            return;
-        }
-
-        if (secilen.value.trim().toLowerCase() === dogruCevap.trim().toLowerCase()) {
-            sonucP.style.color = "#198754";
-            sonucP.innerText = "🎉 Doğru Cevap!";
-        } else {
-            sonucP.style.color = "#dc3545";
-            sonucP.innerText = ❌ Yanlış! Doğru cevap: "${dogruCevap}";
-        }
-    }
+function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    localStorage.setItem('darkMode', isDarkMode ? 'enabled' : 'disabled');
+    const btn = document.querySelector('.dark-mode-toggle');
+    if (btn) btn.innerHTML = isDarkMode ? '☀️ Açık Mod' : '🌙 Koyu Mod';
+}
 </script>
 </body>
 </html>
