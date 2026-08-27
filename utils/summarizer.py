@@ -132,33 +132,29 @@ def soru_uret(metin, adet=3):
 
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel('models/gemini-1.5-flash')
-        prompt = f"""
-        Aşağıdaki akademik/kimya metnine dayanarak tam {adet} adet çoktan seçmeli test sorusu hazırla.
-        Sorular ve şıklar metindeki bilgilere tam olarak uygun, mantıklı ve anlamlı olmalıdır.
-        
-        Yanıtı SADECE aşağıdaki JSON formatında ver, başka hiçbir açıklama metni ekleme:
-        [
-            {{
-                "soru": "Soru metni buraya",
-                "siklar": ["A şıkkı", "B şıkkı", "C şıkkı", "D şıkkı"],
-                "cevap": "Doğru olan şıkkın birebir metni"
-            }}
-        ]
+       prompt = f"""
+Aşağıdaki akademik metne dayanarak tam {adet} adet çoktan seçmeli test sorusu hazırla. 
+Sorular ve şıklar metindeki bilgilere tam olarak uygun, mantıklı ve anlamlı olmalıdır.
 
+Yanıtı SADECE aşağıdaki JSON formatında ver, başka hiçbir açıklama metni ekleme:
+[
+  {{
+    "soru": "Soru metni buraya",
+    "siklar": ["A şıkkı", "B şıkkı", "C şıkkı", "D şıkkı"],
+    "cevap": "Doğru olan şıkkın birebir metni"
+  }}
+]
         Metin:
         {metin[:8000]}
         """
-
-        response = model.generate_content(prompt)
-        raw_text = response.text.strip()
-        if raw_text.startswith("```"):
-            raw_text = raw_text.split("")[1]
-            if raw_text.startswith("json"):
-                raw_text = raw_text[4:]
-        raw_text = raw_text.strip()
-
-        sorular = json.loads(raw_text)
-        return sorular
+response = model.generate_content(prompt)
+    raw_text = response.text.strip()
+    if raw_text.startswith(""):
+        raw_text = raw_text.split("")[1]
+    raw_text = raw_text.replace("json", "", 1).replace("```", "").strip()
+    sorular = json.loads(raw_text)
+    return sorular
+        
 
     except Exception as e:
         print(f"Gemini soru üretme hatası: {e}")
