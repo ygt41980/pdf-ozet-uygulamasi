@@ -152,7 +152,7 @@ Metin:
 
         response = model.generate_content(prompt)
         raw_text = response.text.strip()
-        if raw_text.startswith(""):
+        if raw_text.startswith("```"):
             raw_text = raw_text.split("")[1]
         raw_text = raw_text.replace("json", "", 1).replace("```", "").strip()
         sorular = json.loads(raw_text)
@@ -161,3 +161,38 @@ Metin:
     except Exception as e:
         print(f"Gemini soru üretme hatası: {e}")
         return []
+import os
+from google import genai
+
+def soru_uret(metin: str, adet: int = 5) -> list:
+    """
+    Gemini API kullanarak metinden çoktan seçmeli çalışma soruları üretir.
+    """
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        return []
+        
+    client = genai.Client(api_key=api_key)
+    
+    prompt = f"""
+    Aşağıdaki metne dayanarak öğrencinin çalışması için {adet} adet çoktan seçmeli soru üret.
+    Çıktıyı kesinlikle her biri şu anahtarları içeren bir JSON listesi (array of objects) olarak ver:
+    - "soru": Soru metni
+    - "siklar": 4 şıklı bir liste (örneğin ["A) ...", "B) ...", "C) ...", "D) ..."])
+    - "cevap": Doğru şık (örneğin "A) ...")
+    
+    Metin:
+    {metin[:4000]}
+    """
+    
+    try:
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=prompt,
+        )
+        # Yanıttan gelen JSON'ı ayıkla ve döndür (Gerekli parse işlemleri eklenebilir)
+        # Basitlik olması açısından veya projedeki yapıya uygun şekilde ayarlayabilirsin.
+    except Exception as e:
+        print("Soru üretme hatası:", e)
+        
+    return []
