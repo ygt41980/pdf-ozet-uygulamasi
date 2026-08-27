@@ -122,13 +122,21 @@ def metin_istatistiklerini_hesapla(metin: str) -> dict:
     }
 import random
 def soru_uret(metin: str, adet: int = 5) -> list:
-    """Metindeki anahtar kelimeleri ve önemli terimleri kullanarak şıklı çalışma soruları üretir."""
+    """Metindeki anahtar kelimeleri kullanarak farklı tarzlarda ve tıklanabilir şıklı çalışma soruları üretir."""
     anahtar_kelimeler = anahtar_kelimeleri_bul(metin, adet=10)
     if not anahtar_kelimeler:
         return []
 
     secilenler = random.sample(anahtar_kelimeler, min(adet, len(anahtar_kelimeler)))
     quiz_listesi = []
+
+    soru_kaliplari = [
+        "Metne göre '{}' kavramı hangi bağlamda ön plana çıkmaktadır?",
+        "Aşağıdakilerden hangisi metinde geçen '{}' terimi ile doğrudan ilişkilidir?",
+        "Metinde vurgulanan temel unsurlardan biri olan '{}' hakkında ne söylenebilir?",
+        "Yazıda sıklıkla bahsedilen '{}' kavramının metindeki temel işlevi nedir?",
+        "Metnin ana hatları göz önüne alındığında '{}' kavramı neyi ifade eder?"
+    ]
 
     for idx, (kelime, frekans) in enumerate(secilenler, 1):
         yanlis_secenekler = [k[0] for k in anahtar_kelimeler if k[0] != kelime]
@@ -140,9 +148,11 @@ def soru_uret(metin: str, adet: int = 5) -> list:
         secenek_havuzu.append(kelime)
         random.shuffle(secenek_havuzu)
 
+        kalipli_metin = random.choice(soru_kaliplari).format(kelime.capitalize())
+
         quiz_listesi.append({
             "soru_no": idx,
-            "metin": f"Metinde en çok öne çıkan temel kavramlardan biri olan '{kelime.capitalize()}' kavramı ile ilgili vurgu aşağıdakilerden hangisidir?",
+            "metin": kalipli_metin,
             "secenekler": secenek_havuzu,
             "dogru_cevap": kelime
         })
