@@ -124,59 +124,18 @@ def metin_istatistiklerini_hesapla(metin: str) -> dict:
         "tahmini_okuma_suresi_dk": tahmini_okuma_suresi_dk
     }
 import random
-def soru_uret(metin, adet=3):
-    try:
-        api_key = os.environ.get("GEMINI_API_KEY")
-        if not api_key:
-            return []
-
-        genai.configure(api_key=api_key)
-        model = genai.GenerativeModel('models/gemini-1.5-flash')
-        
-        prompt = f"""
-Aşağıdaki akademik metne dayanarak tam {adet} adet çoktan seçmeli test sorusu hazırla. 
-Sorular ve şıklar metindeki bilgilere tam olarak uygun, mantıklı ve anlamlı olmalıdır.
-
-Yanıtı SADECE aşağıdaki JSON formatında ver, başka hiçbir açıklama metni ekleme:
-[
-  {{
-    "soru": "Soru metni buraya",
-    "siklar": ["A şıkkı", "B şıkkı", "C şıkkı", "D şıkkı"],
-    "cevap": "Doğru olan şıkkın birebir metni"
-  }}
-]
-
-Metin:
-{metin[:8000]}
-"""
-
-        response = model.generate_content(prompt)
-        raw_text = response.text.strip()
-        if raw_text.startswith("```"):
-            raw_text = raw_text.split("")[1]
-        raw_text = raw_text.replace("json", "", 1).replace("```", "").strip()
-        sorular = json.loads(raw_text)
-        return sorular
-        
-    except Exception as e:
-        print(f"Gemini soru üretme hatası: {e}")
-        return []
-import os
-from google import genai
-
+ print("Soru üretme hatası:", e)
 def soru_uret(metin: str, adet: int = 5) -> list:
-    """
-    Gemini API kullanarak metinden çoktan seçmeli çalışma soruları üretir.
-    """
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
         return []
         
-    client = genai.Client(api_key=api_key)
+    genai.configure(api_key=api_key)
+    model = genai.GenerativeModel('gemini-1.5-flash')
     
     prompt = f"""
     Aşağıdaki metne dayanarak öğrencinin çalışması için {adet} adet çoktan seçmeli soru üret.
-    Çıktıyı kesinlikle her biri şu anahtarları içeren bir JSON listesi (array of objects) olarak ver:
+    Çıktıyı kesinlikle her biri şu anahtarları içeren bir JSON listesi olarak ver:
     - "soru": Soru metni
     - "siklar": 4 şıklı bir liste (örneğin ["A) ...", "B) ...", "C) ...", "D) ..."])
     - "cevap": Doğru şık (örneğin "A) ...")
@@ -184,11 +143,9 @@ def soru_uret(metin: str, adet: int = 5) -> list:
     Metin:
     {metin[:4000]}
     """
+    
     try:
-        response = client.models.generate_content(
-            model='gemini-2.5-flash',
-            contents=prompt,
-        )
+        response = model.generate_content(prompt)
         raw_text = response.text.strip()
         if raw_text.startswith("```"):
             raw_text = raw_text.split("")[1]
@@ -197,3 +154,4 @@ def soru_uret(metin: str, adet: int = 5) -> list:
     except Exception as e:
         print("Soru üretme hatası:", e)
         return []
+        
