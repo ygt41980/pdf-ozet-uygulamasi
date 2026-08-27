@@ -131,8 +131,7 @@ def soru_uret(metin, adet=3):
             return []
 
         genai.configure(api_key=api_key)
-        model = genai.GenerativeModel('gemini-1.5-pro')
-
+        model = genai.GenerativeModel('models/gemini-1.5-flash')
         prompt = f"""
         Aşağıdaki akademik/kimya metnine dayanarak tam {adet} adet çoktan seçmeli test sorusu hazırla.
         Sorular ve şıklar metindeki bilgilere tam olarak uygun, mantıklı ve anlamlı olmalıdır.
