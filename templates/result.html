@@ -137,4 +137,20 @@ function toggleDarkMode() {
 }
 </script>
 </body>
+            {% if quiz %}
+<div style="margin-top: 30px; padding: 20px; background: #f9f9f9; border-radius: 8px;">
+    <h3>📝 Metin Test Soruları</h3>
+    {% for q in quiz %}
+        <div style="margin-bottom: 20px;">
+            <p><strong>Soru {{ loop.index }}:</strong> {{ q.soru }}</p>
+            <ul style="list-style-type: none; padding-left: 0;">
+                {% for sik in q.siklar %}
+                    <li style="padding: 5px 0;">☑️ {{ sik }}</li>
+                {% endfor %}
+            </ul>
+            <p style="color: #2e7d32; font-size: 0.9em;"><strong>Doğru Cevap:</strong> {{ q.cevap }}</p>
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
 </html>
