@@ -23,6 +23,7 @@ from utils.summarizer import (
     metni_ozetle,
     anahtar_kelimeleri_bul,
     metin_istatistiklerini_hesapla,
+soru_uret,
 )
 
 # ---------------------------------------------------------------------------
@@ -95,7 +96,7 @@ def analiz_et():
         istatistikler = metin_istatistiklerini_hesapla(metin)
         ozet = metni_ozetle(metin, cumle_sayisi=6)
         anahtar_kelimeler = anahtar_kelimeleri_bul(metin, adet=10)
-
+      quiz_sorulari = soru_uret(metin, adet=5)
         return render_template(
             "result.html",
             dosya_adi=guvenli_ad,
@@ -103,6 +104,7 @@ def analiz_et():
             istatistikler=istatistikler,
             ozet=ozet,
             anahtar_kelimeler=anahtar_kelimeler,
+          quiz=quiz_sorulari
         )
 
     except PDFOkumaHatasi as hata:
