@@ -119,7 +119,27 @@ function ozetiIndir() {
     link.click();
     URL.revokeObjectURL(link.href);
 }
-
+function cevapKontrol(soruNo, dogruCevap) {
+    const secilen = document.querySelector('input[name="soru_' + soruNo + '"]:checked');
+    const sonucDiv = document.getElementById('sonuc-' + soruNo);
+    
+    if (!secilen) {
+        sonucDiv.style.color = '#ef4444';
+        sonucDiv.innerText = 'Lütfen bir şık seçin!';
+        return;
+    }
+    
+    const secilenDeger = secilen.value.trim();
+    const dogruDeger = dogruCevap.trim();
+    
+    if (secilenDeger.charAt(0) === dogruDeger.charAt(0) || secilenDeger === dogruDeger) {
+        sonucDiv.style.color = '#22c55e';
+        sonucDiv.innerText = 'Tebrikler, doğru cevap! 🎉';
+    } else {
+        sonucDiv.style.color = '#ef4444';
+        sonucDiv.innerText = 'Yanlış cevap. Doğru cevap: ' + dogruDeger;
+    }
+}
 window.addEventListener('DOMContentLoaded', () => {
     if (localStorage.getItem('darkMode') === 'enabled') {
         document.body.classList.add('dark-mode');
