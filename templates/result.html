@@ -128,9 +128,24 @@ function ozetiIndir() {
 }
 </script>
     </div>
-</body>
-</html>
 </script>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            document.body.classList.add('dark-mode');
+            const btn = document.querySelector('.dark-mode-toggle');
+            if (btn) btn.innerHTML = '☀️ Açık Mod';
+        }
+    });
 
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+        const isDarkMode = document.body.classList.contains('dark-mode');
+        localStorage.setItem('darkMode', isDarkMode ? 'enabled' : 'disabled');
+        
+        const btn = document.querySelector('.dark-mode-toggle');
+        if (btn) btn.innerHTML = isDarkMode ? '☀️ Açık Mod' : '🌙 Koyu Mod';
+    }
+</script>
 </body>
 </html>
