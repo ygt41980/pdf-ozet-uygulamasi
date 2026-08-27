@@ -224,3 +224,27 @@ body {
         grid-template-columns: repeat(2, 1fr);
     }
 }
+/* Yükleme Animasyonu Konteynerı */
+#yuklemeAnimasyonu {
+    display: none;
+    text-align: center;
+    margin-top: 20px;
+    font-family: inherit;
+}
+
+/* Dönen Çark (Spinner) Tasarımı */
+.spinner {
+    width: 40px;
+    height: 40px;
+    margin: 0 auto 10px auto;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* Dönme Efekti */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
