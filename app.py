@@ -33,7 +33,7 @@ soru_uret,
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_KLASORU = os.path.join(BASE_DIR, "uploads")
 IZIN_VERILEN_UZANTILAR = {"pdf"}
-MAKSIMUM_DOSYA_BOYUTU_MB = 20
+MAKSIMUM_DOSYA_BOYUTU_MB = 50
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "gelistirme-icin-gizli-anahtar")
