@@ -80,6 +80,16 @@
             gonderButon.disabled = true;
             gonderButon.textContent = "Analiz ediliyor...";
         });
+    dosyaInput.addEventListener("change", (e) => {
+        const dosya = e.target.files[0];
+        const maxBoyut = 20 * 1024 * 1024; // 20 MB
+
+        if (dosya && dosya.size > maxBoyut) {
+            alert("Dosya boyutu çok yüksek! Lütfen maksimum 20 MB boyutunda bir PDF yükleyin.");
+            dosyaInput.value = "";
+            secilenDosyaEtiketi.textContent = "";
+        }
+    });
     </script>
 </body>
 </html>
