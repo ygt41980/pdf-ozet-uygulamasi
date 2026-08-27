@@ -55,7 +55,7 @@
 
             <a href="{{ url_for('anasayfa') }}" class="buton buton--ikincil">← Başka bir PDF yükle</a>
         </main>
-        <script>
+            <script>
 function metniKopyala() {
     const ozetElemani = document.getElementById("ozet-metni");
     if (!ozetElemani) return;
@@ -63,7 +63,7 @@ function metniKopyala() {
         alert("Özet panoya kopyalandı!");
     }).catch(() => {
         alert("Kopyalama başarısız oldu.");
-    );
+    });
 }
 
 function ozetiIndir() {
