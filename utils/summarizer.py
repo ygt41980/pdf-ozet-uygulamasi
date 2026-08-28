@@ -61,7 +61,7 @@ def metni_ozetle(metin: str, cumle_sayisi: int = 5):
         return "API anahtarı bulunamadı."
 
     genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    model = genai.GenerativeModel('gemini-pro')
 
     prompt = f"""
     Aşağıdaki metni bir öğrencinin en kolay anlayacağı şekilde özetle.
@@ -116,7 +116,7 @@ def soru_uret(metin: str, adet: int = 5) -> list:
         return []
         
     genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-3.6-flash')
+    model = genai.GenerativeModel('gemini-pro')
     
     prompt = f"""
     Aşağıdaki metne dayanarak öğrencinin çalışması için {adet} adet çoktan seçmeli soru üret.
