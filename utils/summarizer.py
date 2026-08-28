@@ -55,47 +55,43 @@ def metni_parcalara_bol(cumleler: list, parca_boyutu: int = 12) -> list:
     return [cumleler[i:i + parca_boyutu] for i in range(0, len(cumleler), parca_boyutu)]
 
 # 3. KATEGORİZE ÖZET FORMATI & ANA İŞLEV
-def metni_ozetle(metin: str, cumle_sayisi: int = 5) -> str:
-    cumleler = _cumlelere_ayir(metin)
-    
-    if not cumleler:
-        return "Metin özet oluşturmak için çok kısa veya geçersiz."
-    
-    if len(cumleler) <= cumle_sayisi:
-        secilen_cumleler = cumleler
-    else:
-        # Akıllı Bölme (Chunking) ile metnin sonlarındaki bilgilerin kaybolması engellenir
-        parcalar = metni_parcalara_bol(cumleler, parca_boyutu=12)
-        secilen_cumleler = []
-        
-        frekanslar = _kelime_frekanslarini_hesapla(cumleler)
-        en_yuksek_frekans = max(frekanslar.values()) if frekanslar else 1
+def metni_ozetle(metin: str, cumle_sayisi: int = 5):
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        return "API anahtarı bulunamadı."
 
-        for parca in parcalar:
-            parca_skorlari = []
-            for idx, cumle in enumerate(parca):
-                kelimeler = KELIME_REGEX.findall(cumle.lower())
-                skor = sum(frekanslar.get(k, 0) for k in kelimeler) / en_yuksek_frekans if kelimeler else 0
-                skor = skor / (len(kelimeler) ** 0.5) if kelimeler else 0
-                parca_skorlari.append((idx, skor, cumle))
-            
-            parca_skorlari.sort(key=lambda x: x[1], reverse=True)
-            if parca_skorlari:
-                secilen_cumleler.append(parca_skorlari[0][2])
-        if len(secilen_cumleler) > cumle_sayisi:
-            secilen_cumleler = secilen_cumleler[:
-    
-                # Ana Fikir ve Önemli Noktalar
-    ana_fikir = secilen_cumleler[0] if secilen_cumleler else ""
-    detaylar = secilen_cumleler[1:] if len(secilen_cumleler) > 1 else []
-    maddeler = "<br>".join([f"• {c}" for c in detaylar])
+    genai.configure(api_key=api_key)
+    model = genai.GenerativeModel('gemini-1.5-flash')
 
-    # Terimler ve Kavramlar
-    terimler_listesi = anahtar_kelimeleri_bul(metin)
-    terimler_text = "<br>".join([f"• *{t[0]}*: {t[1]} geçiş" for t in terimler_listesi])
+    prompt = f"""
+    Aşağıdaki metni bir öğrencinin en kolay anlayacağı şekilde özetle.
 
-    formatli_ozet = f"📌 *Ana Fikir:*<br>{ana_fikir}<br><br>💡 *Önemli Noktalar:*<br>{maddeler}<br><br>🧠 *Terimler ve Kavramlar:*<br>{terimler_text}"
-return formatli_ozet
+    Lütfen çıktıyı şu formatta ve kurallarla ver:
+    📌 *Ana Fikir:*
+    (Metnin temel amacını 1-2 cümleyle yaz)<br><br>
+
+    💡 *Önemli Noktalar:*
+    • (Her bir önemli bilgiyi alt alta maddeler halinde yaz)<br>
+    • (Maddeler arasına başka paragraf koyma)<br><br>
+
+    🧠 *Terimler ve Kavramlar:*
+    • *Terim Adı*: Açıklaması<br>
+    • *Terim Adı*: Açıklaması
+
+    Kurallar:
+    - Yanıtı asla blok metin veya paragraf yapma.
+    - Satır başları ve madde geçişleri için <br> etiketini kullan.
+
+    Metin:
+    {metin[:4000]}
+    """
+
+    try:
+        response = model.generate_content(prompt)
+        return response.text
+    except Exception as e:
+        return f"Özet üretme hatası: {e}"
+
 def anahtar_kelimeleri_bul(metin: str, adet: int = 10) -> list:
     cumleler = _cumlelere_ayir(metin)
     frekanslar = _kelime_frekanslarini_hesapla(cumleler) if cumleler else Counter(KELIME_REGEX.findall(metin.lower()))
