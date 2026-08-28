@@ -55,15 +55,22 @@ def metni_parcalara_bol(cumleler: list, parca_boyutu: int = 12) -> list:
     return [cumleler[i:i + parca_boyutu] for i in range(0, len(cumleler), parca_boyutu)]
 
 # 3. KATEGORİZE ÖZET FORMATI & ANA İŞLEV
-def metni_ozetle(metin: str, cumle_sayisi: int = 5):
+def metni_ozetle(metin: str, seviye: str = "orta"):
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
         return "API anahtarı bulunamadı."
 
     genai.configure(api_key=api_key)
     model = genai.GenerativeModel('gemini-3.6-flash')
-
+        seviye_talimatlari = {
+        "kisa": "Özeti olabildiğince kısa, sadece en temel noktaları içerecek şekilde yaz.",
+        "orta": "Özeti standart uzunlukta, dengeli ve anlaşılır şekilde yaz.",
+        "detayli": "Özeti çok detaylı, kapsamlı ve bol maddeli olarak yaz."
+    }
+    secilen_talimat = seviye_talimatlari.get(seviye, seviye_talimatlari["orta"])
     prompt = f"""
+ {secilen_talimat}
+
     Aşağıdaki metni bir öğrencinin en kolay anlayacağı şekilde özetle.
 
     Lütfen çıktıyı şu formatta ve kurallarla ver:
