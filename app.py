@@ -94,7 +94,14 @@ def analiz_et():
         metin = cikti["metin"]
 
         istatistikler = metin_istatistiklerini_hesapla(metin)
-        ozet = metni_ozetle(metin, cumle_sayisi=6)
+        ozet_seviyesi = request.form.get("ozet_seviyesi", "orta")
+        ozet = metni_ozetle(metin, seviye=ozet_seviyesi)
+
+
+
+
+      
+
         anahtar_kelimeler = anahtar_kelimeleri_bul(metin, adet=10)
         quiz_sorulari = soru_uret(metin, adet=5)
         return render_template(
