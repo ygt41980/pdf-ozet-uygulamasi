@@ -32,6 +32,15 @@
                     <span class="yukleme-alt-metin">Maksimum dosya boyutu: {{ maks_boyut }} MB</span>
                     <input type="file" name="pdf_dosya" id="pdf_dosya" accept="application/pdf" required hidden>
                 </label>
+                <div style="margin-bottom: 15px;">
+    <label for="ozet_seviyesi" style="font-weight: 600; display: block; margin-bottom: 5px;">Özet Seviyesi:</label>
+    <select name="ozet_seviyesi" id="ozet_seviyesi" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc;">
+        <option value="kisa">Kısa Özet</option>
+        <option value="orta" selected>Orta Düzey</option>
+        <option value="detayli">Detaylı Sınav Notu</option>
+    </select>
+</div>
+
                 <p class="secilen-dosya" id="secilen-dosya"></p>
                 <button type="submit" class="buton" id="gonder-buton">Analiz Et</button>
             </form> 
