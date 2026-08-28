@@ -82,35 +82,26 @@ def metni_ozetle(metin: str, cumle_sayisi: int = 5) -> str:
             parca_skorlari.sort(key=lambda x: x[1], reverse=True)
             if parca_skorlari:
                 secilen_cumleler.append(parca_skorlari[0][2])
-        
         if len(secilen_cumleler) > cumle_sayisi:
-            secilen_cumleler = secilen_cumleler[:cumle_sayisi]
-
-    # Ana Fikir ve Önemli Noktalar
-    ana_fikir = secilen_cumleler[0] if secilen_cumleler else ""
-    detaylar = secilen_cumleler[1:] if len(secilen_cumleler) > 1 else secilen_cumleler
-    maddeler = "\n".join([f"• {c}" for c in detaylar])
+            secilen_cumleler = secilen_cumleler[:
     
+                # Ana Fikir ve Önemli Noktalar
+    ana_fikir = secilen_cumleler[0] if secilen_cumleler else ""
+    detaylar = secilen_cumleler[1:] if len(secilen_cumleler) > 1 else []
+    maddeler = "<br>".join([f"• {c}" for c in detaylar])
+
     # Terimler ve Kavramlar
-    terimler_listesi = anahtar_kelimeleri_bul(metin, adet=5)
-    terimler_text = "\n".join([f"• *{t[0].capitalize()}*: Metinde en çok öne çıkan anahtar kavram ({t[1]} kez geçiyor)." for t in terimler_listesi])
+    terimler_listesi = anahtar_kelimeleri_bul(metin)
+    terimler_text = "<br>".join([f"• *{t[0]}*: {t[1]} geçiş" for t in terimler_listesi])
 
-    formatli_ozet = f"""📌 *Ana Fikir:*
-{ana_fikir}
-
-💡 *Önemli Noktalar:*
-{maddeler}
-
-🧠 *Terimler ve Kavramlar:*
-{terimler_text}
-"""
-    return formatli_ozet
-
+    formatli_ozet = f"📌 *Ana Fikir:*<br>{ana_fikir}<br><br>💡 *Önemli Noktalar:*<br>{maddeler}<br><br>🧠 *Terimler ve Kavramlar:*<br>{terimler_text}"
+return formatli_ozet
 def anahtar_kelimeleri_bul(metin: str, adet: int = 10) -> list:
     cumleler = _cumlelere_ayir(metin)
     frekanslar = _kelime_frekanslarini_hesapla(cumleler) if cumleler else Counter(KELIME_REGEX.findall(metin.lower()))
     temiz_frekanslar = Counter({k: v for k, v in frekanslar.items() if k not in STOPWORDS})
     return temiz_frekanslar.most_common(adet)
+        
 
 def metin_istatistiklerini_hesapla(metin: str) -> dict:
     temiz = metni_temizle(metin)
