@@ -62,10 +62,10 @@ def metni_ozetle(metin: str, seviye: str = "orta"):
 
     genai.configure(api_key=api_key)
     model = genai.GenerativeModel('gemini-3.6-flash')
-        seviye_talimatlari = {
-        "kisa": "Özeti olabildiğince kısa, sadece en temel noktaları içerecek şekilde yaz.",
-        "orta": "Özeti standart uzunlukta, dengeli ve anlaşılır şekilde yaz.",
-        "detayli": "Özeti çok detaylı, kapsamlı ve bol maddeli olarak yaz."
+    seviye_talimatlari = {
+    "kisa": "Özeti olabildiğince kısa, sadece en temel noktaları içerecek şekilde yaz.",
+    "orta": "Özeti standart uzunlukta, dengeli ve anlaşılır şekilde yaz.",
+    "detayli": "Özeti çok detaylı, kapsamlı ve bol maddeli olarak yaz."
     }
     secilen_talimat = seviye_talimatlari.get(seviye, seviye_talimatlari["orta"])
     prompt = f"""
