@@ -36,7 +36,7 @@
 
             <section class="bolum">
                 <h2>📝 Özet</h2>
-                <p id="ozet-metni" class="ozet-metni">{{ ozet }}</p>
+                <p id="ozet-metni" class="ozet-metni">{{ ozet| safe }}</p>
                 <div style="margin-top: 10px; display: flex; gap: 10px;">
     <button type="button" class="buton" onclick="metniKopyala()">📋 Özeti Kopyala</button>
     <button type="button" class="buton buton--ikincil" onclick="ozetiIndir()">📥 .txt İndir</button>
