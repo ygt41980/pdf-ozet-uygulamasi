@@ -139,7 +139,6 @@ def soru_uret(metin: str, adet: int = 5) -> list:
         response = model.generate_content(prompt)
         raw_text = response.text.strip()
         
-        # Eğer yapay zeka markdown blokları (```json ... ```) kullandıysa temizleyelim
         if "```json" in raw_text:
             raw_text = raw_text.split("```json")[1].split("```")[0].strip()
         elif "```" in raw_text:
@@ -148,9 +147,9 @@ def soru_uret(metin: str, adet: int = 5) -> list:
         return json.loads(raw_text)
         
     except Exception as e:
-        print("SORU ÜRETME VEYA JSON HATASI:", e)
-        print("GELEN HAM METİN ŞUYDU:", locals().get("raw_text", "Metin alınamadı"))
+        print("HATA:", e)
         return []
+    
 
 
 
