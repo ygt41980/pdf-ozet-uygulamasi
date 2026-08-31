@@ -135,9 +135,10 @@ def analiz_et():
 
 @app.errorhandler(413)
 def dosya_cok_buyuk(hata):
-    flash(f"Dosya çok büyük. Maksimum boyut: {MAKSIMUM_DOSYA_BOYUTU_MB} MB.", "hata")
+    flash(f"Dosya çok büyük. Maksimum boyut 50 MB.", "hata")
     return redirect(url_for("anasayfa"))
-  @app.route('/chat', methods=['POST'])
+
+@app.route('/chat', methods=['POST'])
 def chat():
     data = request.get_json()
     soru = data.get('soru')
@@ -148,6 +149,7 @@ def chat():
 
     cevap = pdfye_soru_sor(metin, soru)
     return jsonify({'cevap': cevap})
+
 
 
 
