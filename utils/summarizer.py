@@ -149,7 +149,7 @@ def soru_uret(metin: str, adet: int = 5) -> list:
     except Exception as e:
         print("Soru üretme hatası:", e)
         return []
-        def pdfye_soru_sor(metin: str, soru: str) -> str:
+def pdfye_soru_sor(metin: str, soru: str) -> str:
     """PDF metnine dayaranak kullanıcı sorularını yanıtlar."""
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
