@@ -149,4 +149,20 @@ def soru_uret(metin: str, adet: int = 5) -> list:
     except Exception as e:
         print("Soru üretme hatası:", e)
         return []
+        def ask_pdf_question(pdf_text, question):
+    prompt = f"""
+    Sen bir yardımcı eğitim asistanısın. Aşağıda sana verilen PDF içeriğini dikkatlice incele ve SADECE bu içeriğe dayanarak kullanıcının sorusunu yanıtla.
+    Eğer cevabı verilen metinde bulamıyorsan dürüstçe "Bu sorunun cevabı yüklenen PDF belgesinde yer almamaktadır." de.
+
+    PDF İÇERİĞİ:
+    {pdf_text}
+
+    KULLANICININ SORUSU:
+    {question}
+    """
+    
+    # summarizer.py içindeki mevcut Gemini / OpenAI model çağrı kodun:
+    response = model.generate_content(prompt)
+    return response.text
+
 
