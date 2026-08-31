@@ -15,7 +15,7 @@ Sonra tarayıcıdan http://127.0.0.1:5000 adresine gidin.
 import os
 import uuid
 
-from flask import Flask, jsonify, render_template, request, redirect, url_for, flash
+from flask import Flask, jsonify, render_template, request, redirect, url_for, flash, session
 from werkzeug.utils import secure_filename
 
 from utils.pdf_utils import pdf_metnini_cikar, PDFOkumaHatasi
@@ -23,8 +23,11 @@ from utils.summarizer import (
     metni_ozetle,
     anahtar_kelimeleri_bul,
     metin_istatistiklerini_hesapla,
-soru_uret,
+    soru_uret,
+    pdfye_soru_sor,
 )
+
+
 
 # ---------------------------------------------------------------------------
 # Yapılandırma
@@ -92,6 +95,8 @@ def analiz_et():
 
         cikti = pdf_metnini_cikar(dosya_yolu)
         metin = cikti["metin"]
+        session['pdf_text'] = metin
+
 
         istatistikler = metin_istatistiklerini_hesapla(metin)
         ozet_seviyesi = request.form.get("ozet_seviyesi", "orta")
@@ -132,6 +137,18 @@ def analiz_et():
 def dosya_cok_buyuk(hata):
     flash(f"Dosya çok büyük. Maksimum boyut: {MAKSIMUM_DOSYA_BOYUTU_MB} MB.", "hata")
     return redirect(url_for("anasayfa"))
+  @app.route('/chat', methods=['POST'])
+def chat():
+    data = request.get_json()
+    soru = data.get('soru')
+    metin = session.get('pdf_text', '')
+
+    if not metin:
+        return jsonify({'cevap': 'Lütfen önce bir PDF dosyası yükleyin.'}), 400
+
+    cevap = pdfye_soru_sor(metin, soru)
+    return jsonify({'cevap': cevap})
+
 
 
 if __name__ == "__main__":
