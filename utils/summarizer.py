@@ -149,3 +149,27 @@ def soru_uret(metin: str, adet: int = 5) -> list:
     except Exception as e:
         print("Soru üretme hatası:", e)
         return []
+        def pdfye_soru_sor(metin: str, soru: str) -> str:
+    """PDF metnine dayaranak kullanıcı sorularını yanıtlar."""
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        return "API anahtarı bulunamadı."
+    
+    genai.configure(api_key=api_key)
+    model = genai.GenerativeModel('gemini-1.5-flash')
+    
+    prompt = f"""
+    Aşağıdaki PDF metnine dayanarak kullanıcının sorusunu net, anlaşılır ve doğru bir şekilde Türkçe olarak yanıtla.
+    
+    Metin:
+    {metin[:4000]}
+    
+    Soru: {soru}
+    """
+    
+    try:
+        response = model.generate_content(prompt)
+        return response.text
+    except Exception as e:
+        return f"Soru yanıtlanırken bir hata oluştu: {e}"
+
