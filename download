@@ -1,0 +1,31 @@
+# Sirlar - ASLA commit edilmemeli
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Kullanici belgeleri - gizlilik
+uploads/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Sanal ortamlar
+venv/
+.venv/
+env/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Loglar
+*.log
