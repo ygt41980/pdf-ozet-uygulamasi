@@ -1,0 +1,15 @@
+Flask==3.0.3
+pdfplumber==0.11.4
+Werkzeug==3.0.4
+gunicorn==23.0.0
+google-generativeai
+
+# --- Güvenlik sertleştirmesi için eklendi (2026-09-01) ---
+# bleach: LLM çıktısını HTML'e basmadan önce allow-list ile temizler.
+#   Python'da HTML sanitizasyonunun fiili standardı, Mozilla kaynaklı.
+#   Gerekçe: model çıktısı doğrudan sayfaya yazılıyordu (XSS). Bkz. SEV-002.
+bleach==6.1.0
+# Flask-Limiter: endpoint bazlı hız sınırı.
+#   Harici servis gerektirmeden memory:// ile çalışır.
+#   Gerekçe: her istek ücretli bir Gemini çağrısı tetikliyordu. Bkz. SEV-006.
+Flask-Limiter==3.8.0
