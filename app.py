@@ -230,20 +230,26 @@ def analiz_et():
         istatistikler = metin_istatistiklerini_hesapla(metin)
         ozet_seviyesi = request.form.get("ozet_seviyesi", "orta")
 
-        # LLM çıktısı GÜVENİLMEZ VERİDİR ve HTML olarak render edilecektir.
-        # Sanitizasyon, dolaylı prompt injection -> XSS zincirini kıran halkadır.
         from concurrent.futures import ThreadPoolExecutor
 
-anahtar_kelimeler = anahtar_kelimeleri_bul(metin, adet=10)
+        with ThreadPoolExecutor() as executor:
+            gelecek_ozet = executor.submit(metni_ozetle, metin, ozet_seviyesi)
+            gelecek_quiz = executor.submit(soru_uret, metin, 5)
 
-# Özet ve Quiz istekleri Gemini'a arka arkaya değil, aynı anda (paralel) gönderilir
-with ThreadPoolExecutor() as executor:
-    gelecek_ozet = executor.submit(metni_ozetle, metin, ozet_seviyesi)
-    gelecek_quiz = executor.submit(soru_uret, metin, 5)
+            ozet = llm_ciktisini_temizle(gelecek_ozet.result())
+            quiz_sorulari = quiz_ciktisini_dogrula(gelecek_quiz.result())
 
-    # İki işlem de bitince sonuçlar alınır ve senin güvenlik filtrelerinden geçirilir
-    ozet = llm_ciktisini_temizle(gelecek_ozet.result())
-    quiz_sorulari = quiz_ciktisini_dogrula(gelecek_quiz.result())
+        anahtar_kelimeler = anahtar_kelimeleri_bul(metin, adet=10)
+
+        return render_template(
+            "result.html",
+            dosya_adi=guvenli_ad,
+            sayfa_sayisi=cikti["sayfa_sayisi"],
+            istatistikler=istatistikler,
+            ozet=ozet,
+            anahtar_kelimeler=anahtar_kelimeler,
+            quiz=quiz_sorulari,
+        )
 
 
         return render_template(
