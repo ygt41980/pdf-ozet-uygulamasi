@@ -207,7 +207,8 @@ def pdfye_soru_sor(metin: str, soru: str) -> str:
         return "API anahtarı bulunamadı."
     
     genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    model = genai.GenerativeModel('gemini-3.6-flash')
+
     
     # Hem belge hem de kullanıcı sorusu güvenilmez veridir: soru doğrudan
     # kullanıcıdan gelir ve prompt'un sonuna eklendiği için sınırlayıcı
