@@ -232,13 +232,19 @@ def analiz_et():
 
         # LLM çıktısı GÜVENİLMEZ VERİDİR ve HTML olarak render edilecektir.
         # Sanitizasyon, dolaylı prompt injection -> XSS zincirini kıran halkadır.
-        ozet = llm_ciktisini_temizle(metni_ozetle(metin, seviye=ozet_seviyesi))
+        from concurrent.futures import ThreadPoolExecutor
 
-        anahtar_kelimeler = anahtar_kelimeleri_bul(metin, adet=10)
+anahtar_kelimeler = anahtar_kelimeleri_bul(metin, adet=10)
 
-        # Model çıktısının yapısı garanti edilemez; şemaya uymayan elemanlar
-        # atılır ki tek bozuk soru tüm sonuç sayfasını 500 ile düşürmesin.
-        quiz_sorulari = quiz_ciktisini_dogrula(soru_uret(metin, adet=5))
+# Özet ve Quiz istekleri Gemini'a arka arkaya değil, aynı anda (paralel) gönderilir
+with ThreadPoolExecutor() as executor:
+    gelecek_ozet = executor.submit(metni_ozetle, metin, ozet_seviyesi)
+    gelecek_quiz = executor.submit(soru_uret, metin, 5)
+
+    # İki işlem de bitince sonuçlar alınır ve senin güvenlik filtrelerinden geçirilir
+    ozet = llm_ciktisini_temizle(gelecek_ozet.result())
+    quiz_sorulari = quiz_ciktisini_dogrula(gelecek_quiz.result())
+
 
         return render_template(
             "result.html",
