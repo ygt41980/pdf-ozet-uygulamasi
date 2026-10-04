@@ -21,6 +21,9 @@ import secrets
 import tempfile
 import uuid
 
+from dotenv import load_dotenv
+load_dotenv()
+
 from flask import Flask, jsonify, render_template, request, redirect, url_for, flash, session
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -45,6 +48,9 @@ from utils.summarizer import (
     soru_uret,
     pdfye_soru_sor,
 )
+from functools import wraps
+from urllib.parse import urlencode
+from utils.auth_db import sb, pkce_uret, kota_kullan
 
 
 # ---------------------------------------------------------------------------
@@ -211,15 +217,80 @@ def dosya_uzantisi_izinli_mi(dosya_adi: str) -> bool:
 # ---------------------------------------------------------------------------
 # Rotalar
 # ---------------------------------------------------------------------------
+# 
+# 
+def giris_gerekli(f):
+    @wraps(f)
+    def sarmal(*a, **k):
+        if "kullanici" not in session:
+            flash("Devam etmek için Google ile giriş yapın.", "hata")
+            return redirect(url_for("anasayfa"))
+        return f(*a, **k)
+    return sarmal
+
+
+@app.context_processor
+def kullaniciyi_sabloga_ver():
+    return {"kullanici": session.get("kullanici")}
+
+
+@app.route("/giris/google")
+def giris_google():
+    verifier, challenge = pkce_uret()
+    session["pkce"] = verifier
+    params = urlencode({
+        "provider": "google",
+        "redirect_to": url_for("auth_donus", _external=True),
+        "code_challenge": challenge,
+        "code_challenge_method": "s256",
+    })
+    return redirect(f"{os.environ['SUPABASE_URL']}/auth/v1/authorize?{params}")
+
+
+@app.route("/auth/donus")
+def auth_donus():
+    code = request.args.get("code")
+    verifier = session.pop("pkce", None)
+    if not code or not verifier:
+        flash("Giriş tamamlanamadı, tekrar deneyin.", "hata")
+        return redirect(url_for("anasayfa"))
+    try:
+        r = sb().auth.exchange_code_for_session(
+            {"auth_code": code, "code_verifier": verifier}
+        )
+        session["kullanici"] = {"id": r.user.id, "email": r.user.email}
+    except Exception:
+        app.logger.exception("Giriş hatası")
+        flash("Giriş yapılamadı.", "hata")
+    return redirect(url_for("anasayfa"))
+
+
+@app.route("/cikis")
+def cikis():
+    session.pop("kullanici", None)
+    return redirect(url_for("anasayfa"))
+
 
 @app.route("/")
 def anasayfa():
     """Yükleme formunun gösterildiği ana sayfa."""
-    return render_template("index.html", maks_boyut=MAKSIMUM_DOSYA_BOYUTU_MB)
+    gecmis = []
+    if "kullanici" in session:
+        try:
+            r = (sb().table("documents")
+                 .select("filename,page_count,summary_level,created_at")
+                 .eq("user_id", session["kullanici"]["id"])
+                 .order("created_at", desc=True)
+                 .limit(10).execute())
+            gecmis = r.data
+        except Exception:
+            app.logger.exception("Geçmiş okunamadı")
+    return render_template("index.html", maks_boyut=MAKSIMUM_DOSYA_BOYUTU_MB, gecmis=gecmis)
 
 
 @app.route("/analiz", methods=["POST"])
 @limiter.limit("5 per minute; 30 per hour")
+@giris_gerekli
 def analiz_et():
     """Yüklenen PDF'i işleyip sonuç sayfasını döndürür."""
 
@@ -243,6 +314,10 @@ def analiz_et():
     if not pdf_imzasi_gecerli_mi(dosya.stream):
         app.logger.info("Geçersiz PDF imzası nedeniyle yükleme reddedildi.")
         flash("Dosya geçerli bir PDF değil. Lütfen gerçek bir PDF dosyası yükleyin.", "hata")
+        return redirect(url_for("anasayfa"))
+
+    if not kota_kullan(session["kullanici"]["id"]):
+        flash("Bugünkü 10 ücretsiz analiz hakkınız doldu. Yarın tekrar deneyin.", "hata")
         return redirect(url_for("anasayfa"))
 
     # Aynı isimli dosyaların üzerine yazılmasını önlemek için benzersiz bir ad üret.
@@ -274,6 +349,19 @@ def analiz_et():
             quiz_sorulari = quiz_ciktisini_dogrula(gelecek_quiz.result())
 
         anahtar_kelimeler = anahtar_kelimeleri_bul(metin, adet=10)
+
+        try:
+            sb().table("documents").insert({
+                "user_id": session["kullanici"]["id"],
+                "filename": guvenli_ad,
+                "page_count": cikti["sayfa_sayisi"],
+                "summary_level": ozet_seviyesi,
+                "summary": ozet,
+                "keywords": anahtar_kelimeler,
+                "questions": quiz_sorulari,
+            }).execute()
+        except Exception:
+            app.logger.exception("Geçmiş kaydedilemedi")
 
         return render_template(
             "result.html",
@@ -311,6 +399,7 @@ def analiz_et():
 
 @app.route("/chat", methods=["POST"])
 @limiter.limit("10 per minute; 60 per hour")
+@giris_gerekli
 def chat():
     """Yüklenen PDF hakkında soru yanıtlar.
 
@@ -335,6 +424,9 @@ def chat():
     metin = BELGE_DEPOSU.al(session.get("belge_id"))
     if not metin:
         return jsonify({"cevap": "Lütfen önce bir PDF dosyası yükleyin."}), 400
+    
+    if not kota_kullan(session["kullanici"]["id"]):
+        return jsonify({"cevap": "Bugünkü ücretsiz kullanım hakkınız doldu. Yarın tekrar deneyin."}), 429
 
     # Yanıt bugün JSON olarak dönüyor, ancak ileride bir arayüz bunu DOM'a
     # yazarsa sanitize edilmemiş model çıktısı yeniden XSS'e dönüşür.

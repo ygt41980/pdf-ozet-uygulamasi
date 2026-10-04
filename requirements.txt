@@ -19,3 +19,4 @@ Flask-Limiter==3.8.0
 #   senaryolara karşı tek katmandı. Token bazlı CSRF, ikinci ve daha güçlü
 #   bir savunma katmanı ekler.
 Flask-WTF==1.2.2
+supabase==2.32.0

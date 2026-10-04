@@ -44,8 +44,10 @@ def pdf_metnini_cikar(dosya_yolu: str) -> dict:
     arasında ValueError fırlatabilir — o noktada tekrar ayrı bir mekanizma
     gerekir.
     """
-    onceki_isleyici = signal.signal(signal.SIGALRM, _zaman_asimi_isaretle)
-    signal.alarm(MAKSIMUM_PDF_ISLEME_SANIYE)
+    onceki_isleyici = None
+    if hasattr(signal, "SIGALRM"):
+        onceki_isleyici = signal.signal(signal.SIGALRM, _zaman_asimi_isaretle)
+        signal.alarm(MAKSIMUM_PDF_ISLEME_SANIYE)
 
     try:
         sayfa_metinleri = []
@@ -106,8 +108,6 @@ def pdf_metnini_cikar(dosya_yolu: str) -> dict:
             "sayfa_metinleri": sayfa_metinleri,
         }
     finally:
-        # Alarm'ı iptal et ve önceki isleyiciyi geri yükle — aksi halde bu
-        # process'teki bambaşka bir istek, ilgisiz bir anda bu alarm'dan
-        # etkilenebilir.
-        signal.alarm(0)
-        signal.signal(signal.SIGALRM, onceki_isleyici)
+        if hasattr(signal, "SIGALRM"):
+            signal.alarm(0)
+            signal.signal(signal.SIGALRM, onceki_isleyici)

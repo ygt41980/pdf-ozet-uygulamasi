@@ -12,6 +12,14 @@
         <header class="baslik">
             <h1>📄 PDF Analiz &amp; Özetleme Aracı</h1>
             <p>PDF dosyanızı yükleyin; sizin için otomatik olarak özetleyelim.</p>
+            <div style="margin-top: 10px;">
+                {% if kullanici %}
+                    <span>{{ kullanici.email }}</span>
+                    · <a href="{{ url_for('cikis') }}">Çıkış</a>
+                {% else %}
+                    <a class="buton" href="{{ url_for('giris_google') }}">Google ile giriş yap</a>
+                {% endif %}
+            </div>
         </header>
 
         {% with mesajlar = get_flashed_messages(with_categories=true) %}
@@ -50,6 +58,16 @@
     <p style="color: #007bff; font-weight: bold;">PDF analiz ediliyor, lütfen bekleyin...</p>
 </div>    
         </main>
+        {% if kullanici and gecmis %}
+        <section class="kart">
+            <h2>Geçmiş analizlerim</h2>
+            <ul>
+                {% for d in gecmis %}
+                <li>{{ d.filename }} · {{ d.page_count }} sayfa · {{ d.created_at[:10] }}</li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %}
 
         <footer class="alt-bilgi">
             <p>Metin çıkarma PyMuPDF ile yapılır. Özet ve çalışma soruları için
