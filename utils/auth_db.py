@@ -22,15 +22,9 @@ def pkce_uret():
 
 def kota_kullan(user_id):
     """True: hak var ve düşüldü. False: günlük limit doldu."""
-    c = sb()
-    bugun = date.today().isoformat()
-    r = (c.table("usage").select("count")
-         .eq("user_id", user_id).eq("day", bugun).execute())
-    n = r.data[0]["count"] if r.data else 0
-    if n >= GUNLUK_LIMIT:
-        return False
-    c.table("usage").upsert(
-        {"user_id": user_id, "day": bugun, "count": n + 1},
-        on_conflict="user_id,day",
-    ).execute()
-    return True
+    r = sb().rpc("kota_kullan_atomik", {
+        "p_user_id": user_id,
+        "p_day": date.today().isoformat(),
+        "p_limit": GUNLUK_LIMIT,
+    }).execute()
+    return bool(r.data) 
