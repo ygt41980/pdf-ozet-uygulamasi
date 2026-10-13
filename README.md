@@ -100,6 +100,8 @@ Tarayıcıdan `http://127.0.0.1:5000` adresini aç.
 | `GEMINI_API_KEY` | Özet/quiz/sohbet için zorunlu | Google AI Studio'dan alınır. Yalnızca sunucuda kullanılır. |
 | `FLASK_DEBUG` | Opsiyonel | Yerel geliştirmede `1`. Üretimde asla açılmamalı. |
 | `UPLOAD_FOLDER` | Opsiyonel | Yüklemelerin geçici yazıldığı klasör. |
+| `SUPABASE_URL` | Girişte zorunlu | Supabase proje adresi. |
+| `SUPABASE_SECRET_KEY` | Girişte zorunlu | Supabase sunucu anahtarı, yalnızca sunucuda kullanılır. |
 
 ## ⚙️ Nasıl Çalışır?
 
