@@ -387,18 +387,20 @@ def analiz_et():
 
         anahtar_kelimeler = anahtar_kelimeleri_bul(metin, adet=10)
 
-        try:
-            sb().table("documents").insert({
-                "user_id": session["kullanici"]["id"],
-                "filename": guvenli_ad,
-                "page_count": cikti["sayfa_sayisi"],
-                "summary_level": ozet_seviyesi,
-                "summary": ozet,
-                "keywords": anahtar_kelimeler,
-                "questions": quiz_sorulari,
-            }).execute()
-        except Exception:
-            app.logger.exception("Geçmiş kaydedilemedi")
+        # Özet üretilemediyse (Gemini hatası) hata metni geçmişe kaydedilmez.
+        if "Özet üretilemedi" not in ozet:
+            try:
+                sb().table("documents").insert({
+                    "user_id": session["kullanici"]["id"],
+                    "filename": guvenli_ad,
+                    "page_count": cikti["sayfa_sayisi"],
+                    "summary_level": ozet_seviyesi,
+                    "summary": ozet,
+                    "keywords": anahtar_kelimeler,
+                    "questions": quiz_sorulari,
+                }).execute()
+            except Exception:
+                app.logger.exception("Geçmiş kaydedilemedi")
 
         return render_template(
             "result.html",
