@@ -43,7 +43,7 @@ Detaylar ve geliştirici kuralları için **[SECURITY.md](SECURITY.md)** dosyas�
 |---|---|
 | Backend | Python 3, Flask 3.0 |
 | PDF ayrıştırma | PyMuPDF (`fitz`) |
-| Yapay zeka | Google Gemini API (`google-generativeai`, Gemini 3.6 Flash) |
+| Yapay zeka | Google Gemini API (`google-genai`, Gemini 3.6 Flash) |
 | Güvenlik | Flask-WTF (CSRF), Flask-Limiter (hız sınırı), bleach (sanitizasyon) |
 | Sunucu | Gunicorn |
 | Arayüz | Jinja2 şablonları, vanilla JS/CSS |
@@ -100,8 +100,6 @@ Tarayıcıdan `http://127.0.0.1:5000` adresini aç.
 | `GEMINI_API_KEY` | Özet/quiz/sohbet için zorunlu | Google AI Studio'dan alınır. Yalnızca sunucuda kullanılır. |
 | `FLASK_DEBUG` | Opsiyonel | Yerel geliştirmede `1`. Üretimde asla açılmamalı. |
 | `UPLOAD_FOLDER` | Opsiyonel | Yüklemelerin geçici yazıldığı klasör. |
-| `SUPABASE_URL` | Girişte zorunlu | Supabase proje adresi. |
-| `SUPABASE_SECRET_KEY` | Girişte zorunlu | Supabase sunucu anahtarı, yalnızca sunucuda kullanılır. |
 
 ## ⚙️ Nasıl Çalışır?
 

@@ -2,7 +2,7 @@ Flask==3.0.3
 PyMuPDF
 Werkzeug==3.0.4
 gunicorn==23.0.0
-google-generativeai
+google-genai
 
 # --- Güvenlik sertleştirmesi için eklendi (2026-09-01) ---
 # bleach: LLM çıktısını HTML'e basmadan önce allow-list ile temizler.
