@@ -278,7 +278,7 @@ def anasayfa():
     if "kullanici" in session:
         try:
             r = (sb().table("documents")
-                 .select("filename,page_count,summary_level,created_at")
+                 .select("id,filename,page_count,summary_level,created_at")
                  .eq("user_id", session["kullanici"]["id"])
                  .order("created_at", desc=True)
                  .limit(10).execute())
@@ -286,6 +286,43 @@ def anasayfa():
         except Exception:
             app.logger.exception("Geçmiş okunamadı")
     return render_template("index.html", maks_boyut=MAKSIMUM_DOSYA_BOYUTU_MB, gecmis=gecmis)
+
+
+@app.route("/gecmis/<belge_id>")
+@giris_gerekli
+def gecmis_detay(belge_id):
+    """Kullanıcının daha önce kaydedilmiş bir analizini yeniden gösterir.
+
+    GÜVENLİK: sorgu her zaman oturumdaki user_id ile de filtrelenir; böylece
+    başkasının kaydı kimlik tahminiyle okunamaz. Veritabanından gelen özet ve
+    quiz de şablona girmeden önce yeniden temizlenir/doğrulanır.
+    """
+    kayit = None
+    try:
+        r = (sb().table("documents")
+             .select("filename,page_count,summary,keywords,questions")
+             .eq("id", belge_id)
+             .eq("user_id", session["kullanici"]["id"])
+             .limit(1).execute())
+        if r.data:
+            kayit = r.data[0]
+    except Exception:
+        app.logger.exception("Geçmiş kayıt okunamadı")
+
+    if not kayit:
+        flash("Kayıt bulunamadı.", "hata")
+        return redirect(url_for("anasayfa"))
+
+    return render_template(
+        "result.html",
+        dosya_adi=kayit["filename"],
+        sayfa_sayisi=kayit["page_count"],
+        istatistikler=None,  # kelime/karakter sayısı kaydedilmiyor
+        ozet=llm_ciktisini_temizle(kayit.get("summary") or ""),
+        anahtar_kelimeler=kayit.get("keywords") or [],
+        quiz=quiz_ciktisini_dogrula(kayit.get("questions") or []),
+        gecmisten=True,  # sohbet gizlenir: belge metni sunucuda saklanmıyor
+    )
 
 
 @app.route("/analiz", methods=["POST"])
