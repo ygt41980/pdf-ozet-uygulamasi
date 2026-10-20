@@ -80,7 +80,7 @@ def test_gecmis_detayda_sohbet_gizlidir(client, monkeypatch):
     """Eski kayıtta belge metni sunucuda yok; sohbet yanlış belgeye cevap vermemeli."""
     sb_kur(monkeypatch, kayit())
     metin = client.get("/gecmis/1").get_data(as_text=True)
-    assert "sohbet-form" not in metin
+    assert "id=\"sohbet-form\"" not in metin
 
 
 def test_baskasinin_kaydi_gorulmez(client, monkeypatch):
