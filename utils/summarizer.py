@@ -4,7 +4,9 @@ import os
 import re
 from collections import Counter
 
-import google.generativeai as genai
+from google import genai
+
+MODEL_ADI = "gemini-3.6-flash"
 
 from utils.security import guvenilmez_metni_hazirla
 
@@ -85,8 +87,7 @@ def metni_ozetle(metin: str, seviye: str = "orta"):
     if not api_key:
         return "API anahtarı bulunamadı."
 
-    genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-3.6-flash')
+    istemci = genai.Client(api_key=api_key)
     seviye_talimatlari = {
     "kisa": "Özeti olabildiğince kısa, sadece en temel noktaları içerecek şekilde yaz.",
     "orta": "Özeti standart uzunlukta, dengeli ve anlaşılır şekilde yaz.",
@@ -128,7 +129,7 @@ Kurallar:
 """
 
     try:
-        response = model.generate_content(prompt)
+        response = istemci.models.generate_content(model=MODEL_ADI, contents=prompt)
         return response.text
     except Exception:
         # Upstream (Google) hata metni kullanıcıya YANSITILMAZ: kota durumu,
@@ -160,8 +161,7 @@ def soru_uret(metin: str, adet: int = 5) -> list:
     if not api_key:
         return []
         
-    genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-3.6-flash')
+    istemci = genai.Client(api_key=api_key)
     
     belge = guvenilmez_metni_hazirla(metin)[:PROMPT_METIN_LIMITI]
     prompt = f"""{GUVENLIK_BASLIGI}
@@ -182,7 +182,7 @@ Görevin: yukarıdaki <belge> içeriğine dayanarak öğrencinin çalışması i
 Tüm alanlar düz metin olmalıdır; HTML, tırnak kaçışı veya kod içermemelidir.
 """
     try:
-        response = model.generate_content(prompt)
+        response = istemci.models.generate_content(model=MODEL_ADI, contents=prompt)
         raw_text = response.text.strip()
 
         # Model çıktısı KULLANICININ ÖZEL BELGESİNDEN türetilmiştir ve
@@ -206,8 +206,7 @@ def pdfye_soru_sor(metin: str, soru: str) -> str:
     if not api_key:
         return "API anahtarı bulunamadı."
     
-    genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-3.6-flash')
+    istemci = genai.Client(api_key=api_key)
 
     
     # Hem belge hem de kullanıcı sorusu güvenilmez veridir: soru doğrudan
@@ -235,7 +234,7 @@ Yanıtın belgede yoksa "Bu bilgi belgede yer almıyor." de.
 """
 
     try:
-        response = model.generate_content(prompt)
+        response = istemci.models.generate_content(model=MODEL_ADI, contents=prompt)
         return response.text
     except Exception:
         logger.warning("Soru yanıtlanamadı.", exc_info=True)
