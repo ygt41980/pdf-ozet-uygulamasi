@@ -63,7 +63,7 @@
             <h2>Geçmiş analizlerim</h2>
             <ul>
                 {% for d in gecmis %}
-                <li>{{ d.filename }} · {{ d.page_count }} sayfa · {{ d.created_at[:10] }}</li>
+                <li><a href="{{ url_for('gecmis_detay', belge_id=d.id) }}">{{ d.filename }}</a> · {{ d.page_count }} sayfa · {{ d.created_at[:10] }}</li>
                 {% endfor %}
             </ul>
         </section>

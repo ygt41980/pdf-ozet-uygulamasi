@@ -13,6 +13,7 @@
         <header class="baslik">
             <h1>📄 Analiz Sonucu</h1>
             <p class="dosya-adi">{{ dosya_adi }}</p>
+            {% if gecmisten %}<p><a href="{{ url_for('anasayfa') }}">← Ana sayfaya dön</a></p>{% endif %}
         </header>
 
         <main class="kart">
@@ -21,6 +22,7 @@
                     <span class="istatistik-sayi">{{ sayfa_sayisi }}</span>
                     <span class="istatistik-etiket">Sayfa</span>
                 </div>
+                {% if istatistikler %}
                 <div class="istatistik-kutu">
                     <span class="istatistik-sayi">{{ istatistikler.kelime_sayisi }}</span>
                     <span class="istatistik-etiket">Kelime</span>
@@ -33,6 +35,7 @@
                     <span class="istatistik-sayi">{{ istatistikler.tahmini_okuma_suresi_dk }} dk</span>
                     <span class="istatistik-etiket">Tahmini Okuma</span>
                 </div>
+                {% endif %}
             </section>
 
             <section class="bolum">
@@ -99,6 +102,7 @@
 </section>
             {% endif %}
 
+            {% if not gecmisten %}
             <section class="bolum">
                 <h2>🤖 PDF ile Sohbet Et</h2>
                 <p class="sohbet-aciklama">
@@ -125,6 +129,7 @@
                     <button type="submit" class="buton sohbet-gonder" id="sohbet-gonder-buton">Gönder</button>
                 </form>
             </section>
+            {% endif %}
 
 <!-- JavaScript Fonksiyonları -->
 <script>
