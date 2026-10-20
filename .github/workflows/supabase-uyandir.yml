@@ -1,0 +1,21 @@
+name: Supabase uyandir
+
+on:
+  schedule:
+    - cron: "17 6 * * 1,4"   # Pazartesi ve Persembe
+  workflow_dispatch:          # elle de calistirilabilsin
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Supabase'e istek at
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+        run: |
+          kod=$(curl -s -o /dev/null -w "%{http_code}" \
+            "$SUPABASE_URL/rest/v1/usage?select=count&limit=1" \
+            -H "apikey: $SUPABASE_SECRET_KEY")
+          echo "HTTP $kod"
+          test "$kod" = "200"
