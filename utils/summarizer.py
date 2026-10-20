@@ -6,7 +6,29 @@ from collections import Counter
 
 from google import genai
 
+import time
+
 MODEL_ADI = "gemini-3.6-flash"
+
+OZET_HATA_MESAJI = "Özet üretilemedi. Lütfen daha sonra tekrar deneyin."
+
+
+def _gemini_cagir(istemci, prompt, deneme=3):
+    """Geçici Google hatalarında (429/5xx) bekleyerek yeniden dener."""
+    son_hata = None
+    for i in range(deneme):
+        try:
+            return istemci.models.generate_content(
+                model=MODEL_ADI, contents=prompt
+            ).text
+        except Exception as e:
+            son_hata = e
+            if getattr(e, "code", None) not in (429, 500, 502, 503, 504):
+                raise
+            if i < deneme - 1:
+                time.sleep(2 * (i + 1))
+    raise son_hata
+
 
 from utils.security import guvenilmez_metni_hazirla
 
@@ -129,14 +151,13 @@ Kurallar:
 """
 
     try:
-        response = istemci.models.generate_content(model=MODEL_ADI, contents=prompt)
-        return response.text
+        return _gemini_cagir(istemci, prompt)
     except Exception:
         # Upstream (Google) hata metni kullanıcıya YANSITILMAZ: kota durumu,
         # yapılandırma ayrıntısı ve iç API detayı sızdırabilir. Ayrıca bu
         # değer HTML olarak render edildiği için ek bir enjeksiyon yüzeyidir.
         logger.warning("Özet üretilemedi.", exc_info=True)
-        return "Özet üretilemedi. Lütfen daha sonra tekrar deneyin."
+        return OZET_HATA_MESAJI
 
 def anahtar_kelimeleri_bul(metin: str, adet: int = 10) -> list:
     cumleler = _cumlelere_ayir(metin)
@@ -182,8 +203,7 @@ Görevin: yukarıdaki <belge> içeriğine dayanarak öğrencinin çalışması i
 Tüm alanlar düz metin olmalıdır; HTML, tırnak kaçışı veya kod içermemelidir.
 """
     try:
-        response = istemci.models.generate_content(model=MODEL_ADI, contents=prompt)
-        raw_text = response.text.strip()
+        raw_text = _gemini_cagir(istemci, prompt).strip()
 
         # Model çıktısı KULLANICININ ÖZEL BELGESİNDEN türetilmiştir ve
         # loglanmaz (KVKK). Yalnızca teşhis için metrik bilgi kaydedilir.
@@ -234,8 +254,7 @@ Yanıtın belgede yoksa "Bu bilgi belgede yer almıyor." de.
 """
 
     try:
-        response = istemci.models.generate_content(model=MODEL_ADI, contents=prompt)
-        return response.text
+        return _gemini_cagir(istemci, prompt)
     except Exception:
         logger.warning("Soru yanıtlanamadı.", exc_info=True)
         return "Soru yanıtlanamadı. Lütfen daha sonra tekrar deneyin."
