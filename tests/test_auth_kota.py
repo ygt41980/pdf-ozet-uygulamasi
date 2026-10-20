@@ -1,6 +1,13 @@
 """Giriş (Google/PKCE) ve günlük kota testleri. Dış servislere çıkılmaz."""
 
 import io
+import pytest
+
+
+@pytest.fixture
+def client(anonim_client):
+    """Bu dosyada 'client' girişsiz istemcidir."""
+    return anonim_client
 
 from conftest import minimal_pdf
 
